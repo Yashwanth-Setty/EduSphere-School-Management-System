@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+:root {
+  --spira-teal-900: #0f5c5b;
+  --spira-teal-800: #136868;
+  --spira-teal-700: #228c8a;
+  --spira-teal-600: #2da19e;
+  --spira-teal-500: #5baeaa;
+  --spira-teal-300: #97d2cb;
+  --spira-surface-0: #ffffff;
+  --spira-surface-50: #f7faf9;
+  --spira-surface-100: #edf5f4;
+  --spira-surface-200: #dbe8e7;
+  --spira-text-900: #0f172a;
+  --spira-text-700: #334155;
+  --spira-text-500: #64748b;
+  --spira-border: #d8e2e1;
+  --spira-success: #15803d;
+  --spira-warning: #b45309;
+  --spira-danger: #b91c1c;
+  --spira-info: #0f766e;
+  --spira-focus-ring: #0f766e;
+  --spira-shadow-sm: 0 1px 2px rgb(15 23 42 / 0.06);
+  --spira-shadow-md: 0 8px 24px rgb(15 23 42 / 0.08);
+  --spira-radius-sm: 8px;
+  --spira-radius-md: 12px;
+  --spira-radius-lg: 20px;
+  --spira-radius-xl: 28px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans, "Inter", ui-sans-serif, system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:focus-visible {
+  outline: 2px solid var(--spira-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--spira-surface-100);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--spira-teal-300);
+  border-radius: 3px;
+}

@@ -1,0 +1,598 @@
+// SPIRA - School Parent Interaction & Resource Access
+// Database schema — school-aware, audit-aware, FERPA/GDPR-ready
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── School & Academic Structure ─────────────────────────────────────────────
+
+model School {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  name      String
+  address   String?
+  logoUrl   String?
+  timezone  String   @default("UTC")
+  isActive  Boolean  @default(true)
+  settings  Json     @default("{}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users           User[]
+  academicYears   AcademicYear[]
+  gradeLevels     GradeLevel[]
+  sections        Section[]
+  courses         Course[]
+  feePlans        FeePlan[]
+  announcements   Announcement[]
+  documents       Document[]
+  analyticsSnaps  AnalyticsSnapshot[]
+  auditLogs       AuditLog[]
+
+  @@map("school")
+}
+
+model AcademicYear {
+  id        String   @id @default(cuid())
+  schoolId  String
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  isCurrent Boolean  @default(false)
+  terms     Json     @default("[\"term_1\",\"term_2\",\"term_3\"]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  school   School    @relation(fields: [schoolId], references: [id])
+  sections Section[]
+  exams    Exam[]
+
+  @@unique([schoolId, name])
+  @@map("academic_year")
+}
+
+model GradeLevel {
+  id          String   @id @default(cuid())
+  schoolId    String
+  name        String
+  displayOrder Int     @default(0)
+  createdAt   DateTime @default(now())
+
+  school   School    @relation(fields: [schoolId], references: [id])
+  sections Section[]
+  gradeScales GradeScale[]
+
+  @@unique([schoolId, name])
+  @@map("grade_level")
+}
+
+model Section {
+  id             String   @id @default(cuid())
+  schoolId       String
+  academicYearId String
+  gradeLevelId   String
+  name           String
+  capacity       Int      @default(40)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  school        School            @relation(fields: [schoolId], references: [id])
+  academicYear  AcademicYear      @relation(fields: [academicYearId], references: [id])
+  gradeLevel    GradeLevel        @relation(fields: [gradeLevelId], references: [id])
+  enrollments   Enrollment[]
+  offerings     CourseOffering[]
+  timetableSlots TimetableSlot[]
+  attendanceSessions AttendanceSession[]
+  studentProfiles StudentProfile[]
+
+  @@unique([academicYearId, gradeLevelId, name])
+  @@map("section")
+}
+
+// ─── Users & RBAC ────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  schoolId     String
+  email        String
+  passwordHash String?
+  displayName  String
+  phone        String?
+  avatarUrl    String?
+  isActive     Boolean  @default(true)
+  lastLoginAt  DateTime?
+  mfaEnabled   Boolean  @default(false)
+  mfaSecret    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  school         School          @relation(fields: [schoolId], references: [id])
+  userRoles      UserRole[]
+  refreshTokens  RefreshToken[]
+  studentProfile StudentProfile?
+  staffProfile   StaffProfile?
+  parentProfile  ParentProfile?
+  auditLogs      AuditLog[]
+
+  @@unique([schoolId, email])
+  @@map("user")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  userRoles UserRole[]
+
+  @@map("role")
+}
+
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String
+  roleId    String
+  grantedAt DateTime @default(now())
+  grantedBy String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id])
+
+  @@unique([userId, roleId])
+  @@map("user_role")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_token")
+}
+
+// ─── Profiles ────────────────────────────────────────────────────────────────
+
+model StudentProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  schoolId     String
+  sectionId    String?
+  admissionNo  String
+  firstName    String
+  lastName     String
+  dob          DateTime
+  gender       String
+  enrollmentStatus String @default("active")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user               User                @relation(fields: [userId], references: [id])
+  section            Section?            @relation(fields: [sectionId], references: [id])
+  enrollments        Enrollment[]
+  attendanceRecords  AttendanceRecord[]
+  submissions        Submission[]
+  examResults        ExamResult[]
+  feeInvoices        FeeInvoice[]
+  parentLinks        ParentStudentLink[]
+
+  @@unique([schoolId, admissionNo])
+  @@map("student_profile")
+}
+
+model StaffProfile {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  schoolId       String
+  employeeNo     String
+  firstName      String
+  lastName       String
+  designation    String
+  department     String?
+  isActive       Boolean  @default(true)
+  joinedAt       DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user           User             @relation(fields: [userId], references: [id])
+  courseOfferings CourseOffering[]
+  attendanceSessions AttendanceSession[]
+
+  @@unique([schoolId, employeeNo])
+  @@map("staff_profile")
+}
+
+model ParentProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  firstName String
+  lastName  String
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user         User                @relation(fields: [userId], references: [id])
+  studentLinks ParentStudentLink[]
+
+  @@map("parent_profile")
+}
+
+model ParentStudentLink {
+  id               String   @id @default(cuid())
+  parentProfileId  String
+  studentProfileId String
+  relationLabel    String
+  isPrimaryContact Boolean  @default(false)
+  billingContact   Boolean  @default(false)
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+
+  parentProfile  ParentProfile  @relation(fields: [parentProfileId], references: [id])
+  studentProfile StudentProfile @relation(fields: [studentProfileId], references: [id])
+
+  @@unique([parentProfileId, studentProfileId])
+  @@map("parent_student_link")
+}
+
+// ─── Courses & Academics ─────────────────────────────────────────────────────
+
+model Course {
+  id          String   @id @default(cuid())
+  schoolId    String
+  code        String
+  name        String
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school    School           @relation(fields: [schoolId], references: [id])
+  offerings CourseOffering[]
+
+  @@unique([schoolId, code])
+  @@map("course")
+}
+
+model CourseOffering {
+  id             String   @id @default(cuid())
+  courseId       String
+  sectionId      String
+  teacherId      String?
+  academicTerm   String
+  createdAt      DateTime @default(now())
+
+  course      Course         @relation(fields: [courseId], references: [id])
+  section     Section        @relation(fields: [sectionId], references: [id])
+  teacher     StaffProfile?  @relation(fields: [teacherId], references: [id])
+  assignments Assignment[]
+  exams       Exam[]
+
+  @@unique([courseId, sectionId, academicTerm])
+  @@map("course_offering")
+}
+
+model Enrollment {
+  id               String   @id @default(cuid())
+  studentProfileId String
+  sectionId        String
+  enrolledAt       DateTime @default(now())
+  status           String   @default("active")
+
+  studentProfile StudentProfile @relation(fields: [studentProfileId], references: [id])
+  section        Section        @relation(fields: [sectionId], references: [id])
+
+  @@unique([studentProfileId, sectionId])
+  @@map("enrollment")
+}
+
+// ─── Timetable ───────────────────────────────────────────────────────────────
+
+model TimetableSlot {
+  id              String   @id @default(cuid())
+  sectionId       String
+  courseOfferingId String?
+  dayOfWeek       Int
+  periodNumber    Int
+  startTime       String
+  endTime         String
+  roomLabel       String?
+  term            String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  section Section @relation(fields: [sectionId], references: [id])
+
+  @@unique([sectionId, dayOfWeek, periodNumber, term])
+  @@map("timetable_slot")
+}
+
+// ─── Attendance ───────────────────────────────────────────────────────────────
+
+model AttendanceSession {
+  id             String    @id @default(cuid())
+  schoolId       String
+  sectionId      String
+  teacherId      String?
+  sessionDate    DateTime
+  periodNumber   Int
+  submittedAt    DateTime?
+  createdAt      DateTime  @default(now())
+
+  section  Section           @relation(fields: [sectionId], references: [id])
+  teacher  StaffProfile?     @relation(fields: [teacherId], references: [id])
+  records  AttendanceRecord[]
+
+  @@unique([sectionId, sessionDate, periodNumber])
+  @@map("attendance_session")
+}
+
+model AttendanceRecord {
+  id                  String   @id @default(cuid())
+  attendanceSessionId String
+  studentProfileId    String
+  status              String
+  remark              String?
+  recordedAt          DateTime @default(now())
+
+  session        AttendanceSession @relation(fields: [attendanceSessionId], references: [id])
+  studentProfile StudentProfile    @relation(fields: [studentProfileId], references: [id])
+
+  @@unique([attendanceSessionId, studentProfileId])
+  @@map("attendance_record")
+}
+
+// ─── Assignments & Submissions ────────────────────────────────────────────────
+
+model Assignment {
+  id               String   @id @default(cuid())
+  courseOfferingId String
+  title            String
+  instructions     String?
+  dueDate          DateTime
+  maxScore         Float?
+  isPublished      Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  courseOffering CourseOffering @relation(fields: [courseOfferingId], references: [id])
+  submissions    Submission[]
+
+  @@map("assignment")
+}
+
+model Submission {
+  id               String    @id @default(cuid())
+  assignmentId     String
+  studentProfileId String
+  fileUrl          String?
+  submittedAt      DateTime?
+  grade            Float?
+  feedback         String?
+  status           String    @default("pending")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  assignment     Assignment     @relation(fields: [assignmentId], references: [id])
+  studentProfile StudentProfile @relation(fields: [studentProfileId], references: [id])
+
+  @@unique([assignmentId, studentProfileId])
+  @@map("submission")
+}
+
+// ─── Exams & Results ─────────────────────────────────────────────────────────
+
+model Exam {
+  id               String   @id @default(cuid())
+  courseOfferingId String
+  academicYearId   String
+  title            String
+  examType         String
+  term             String
+  weight           Float    @default(1.0)
+  maxMarks         Float
+  examDate         DateTime?
+  isPublished      Boolean  @default(false)
+  publishedAt      DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  courseOffering CourseOffering @relation(fields: [courseOfferingId], references: [id])
+  academicYear   AcademicYear   @relation(fields: [academicYearId], references: [id])
+  results        ExamResult[]
+
+  @@map("exam")
+}
+
+model ExamResult {
+  id               String   @id @default(cuid())
+  examId           String
+  studentProfileId String
+  marksObtained    Float?
+  grade            String?
+  remarks          String?
+  enteredAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  exam           Exam           @relation(fields: [examId], references: [id])
+  studentProfile StudentProfile @relation(fields: [studentProfileId], references: [id])
+
+  @@unique([examId, studentProfileId])
+  @@map("exam_result")
+}
+
+model GradeScale {
+  id           String   @id @default(cuid())
+  gradeLevelId String
+  gradeLabel   String
+  minPercent   Float
+  maxPercent   Float
+  gradePoint   Float?
+  description  String?
+  createdAt    DateTime @default(now())
+
+  gradeLevel GradeLevel @relation(fields: [gradeLevelId], references: [id])
+
+  @@map("grade_scale")
+}
+
+// ─── Fee Management ───────────────────────────────────────────────────────────
+
+model FeePlan {
+  id          String   @id @default(cuid())
+  schoolId    String
+  name        String
+  description String?
+  amount      Float
+  currency    String   @default("USD")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school   School       @relation(fields: [schoolId], references: [id])
+  invoices FeeInvoice[]
+
+  @@map("fee_plan")
+}
+
+model FeeInvoice {
+  id               String    @id @default(cuid())
+  feePlanId        String
+  studentProfileId String
+  invoiceNo        String    @unique
+  amountDue        Float
+  amountPaid       Float     @default(0)
+  dueDate          DateTime
+  status           String    @default("pending")
+  issuedAt         DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  feePlan        FeePlan        @relation(fields: [feePlanId], references: [id])
+  studentProfile StudentProfile @relation(fields: [studentProfileId], references: [id])
+  payments       Payment[]
+
+  @@map("fee_invoice")
+}
+
+model Payment {
+  id            String    @id @default(cuid())
+  feeInvoiceId  String
+  amount        Float
+  method        String
+  referenceNo   String?
+  gatewayRef    String?
+  status        String    @default("pending")
+  paidAt        DateTime?
+  createdAt     DateTime  @default(now())
+
+  feeInvoice FeeInvoice @relation(fields: [feeInvoiceId], references: [id])
+
+  @@map("payment")
+}
+
+// ─── Communication ────────────────────────────────────────────────────────────
+
+model Announcement {
+  id          String    @id @default(cuid())
+  schoolId    String
+  authorId    String
+  title       String
+  body        String
+  channel     String    @default("in_app")
+  audienceScope String  @default("school")
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  school School @relation(fields: [schoolId], references: [id])
+
+  @@map("announcement")
+}
+
+// ─── Document Management ──────────────────────────────────────────────────────
+
+model Document {
+  id              String   @id @default(cuid())
+  schoolId        String
+  uploadedById    String
+  category        String
+  title           String
+  storageKey      String
+  mimeType        String
+  sizeBytes       Int
+  visibilityScope String   @default("school_admin")
+  tags            String[] @default([])
+  retentionLabel  String?
+  legalHold       Boolean  @default(false)
+  isDeleted       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  school School @relation(fields: [schoolId], references: [id])
+
+  @@map("document")
+}
+
+// ─── Analytics & AI ───────────────────────────────────────────────────────────
+
+model AnalyticsSnapshot {
+  id         String   @id @default(cuid())
+  schoolId   String
+  snapshotType String
+  period     String
+  data       Json
+  generatedAt DateTime @default(now())
+
+  school School @relation(fields: [schoolId], references: [id])
+
+  @@map("analytics_snapshot")
+}
+
+model AiRecommendation {
+  id              String   @id @default(cuid())
+  targetType      String
+  targetId        String
+  recommendationType String
+  content         String
+  confidence      Float?
+  sourceRange     Json?
+  isLabeled       Boolean  @default(true)
+  featureFlag     String?
+  generatedAt     DateTime @default(now())
+
+  @@map("ai_recommendation")
+}
+
+// ─── Audit Log ────────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  schoolId   String
+  userId     String?
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  school School  @relation(fields: [schoolId], references: [id])
+  user   User?   @relation(fields: [userId], references: [id])
+
+  @@index([schoolId, createdAt])
+  @@index([entityType, entityId])
+  @@map("audit_log")
+}

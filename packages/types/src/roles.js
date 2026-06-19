@@ -1,0 +1,108 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ROLE_PERMISSIONS = exports.ALL_ROLES = exports.Role = void 0;
+var Role;
+(function (Role) {
+    Role["ADMIN"] = "admin";
+    Role["PRINCIPAL"] = "principal";
+    Role["TEACHER"] = "teacher";
+    Role["STUDENT"] = "student";
+    Role["PARENT"] = "parent";
+    Role["ACCOUNTANT"] = "accountant";
+    Role["COUNSELOR"] = "counselor";
+})(Role || (exports.Role = Role = {}));
+exports.ALL_ROLES = Object.values(Role);
+exports.ROLE_PERMISSIONS = {
+    [Role.ADMIN]: [
+        "users:read",
+        "users:write",
+        "students:read",
+        "students:write",
+        "staff:read",
+        "staff:write",
+        "attendance:read",
+        "attendance:write",
+        "timetable:read",
+        "timetable:write",
+        "courses:read",
+        "courses:write",
+        "exams:read",
+        "exams:write",
+        "fees:read",
+        "fees:write",
+        "documents:read",
+        "documents:write",
+        "announcements:read",
+        "announcements:write",
+        "analytics:read",
+        "reports:export",
+        "config:write",
+    ],
+    [Role.PRINCIPAL]: [
+        "students:read",
+        "students:export",
+        "staff:read",
+        "attendance:read",
+        "timetable:read",
+        "timetable:approve",
+        "courses:read",
+        "exams:read",
+        "exams:approve",
+        "announcements:read",
+        "announcements:write",
+        "analytics:read",
+        "reports:export",
+        "documents:read",
+    ],
+    [Role.TEACHER]: [
+        "students:read:assigned",
+        "attendance:write:assigned",
+        "attendance:read:assigned",
+        "timetable:read",
+        "courses:read:assigned",
+        "courses:write:assigned",
+        "exams:write:assigned",
+        "announcements:read",
+        "announcements:write:assigned",
+        "documents:read:assigned",
+        "submissions:read",
+    ],
+    [Role.STUDENT]: [
+        "profile:read:self",
+        "attendance:read:self",
+        "timetable:read:self",
+        "courses:read:self",
+        "submissions:write:self",
+        "exams:read:self:published",
+        "fees:read:self",
+        "fees:pay:self",
+        "documents:read:self",
+        "announcements:read",
+    ],
+    [Role.PARENT]: [
+        "students:read:linked",
+        "attendance:read:linked",
+        "timetable:read:linked",
+        "exams:read:linked:published",
+        "fees:read:linked",
+        "fees:pay:linked",
+        "documents:read:linked",
+        "announcements:read",
+    ],
+    [Role.ACCOUNTANT]: [
+        "fees:read",
+        "fees:write",
+        "payments:read",
+        "payments:write",
+        "reports:export:finance",
+        "documents:read:finance",
+    ],
+    [Role.COUNSELOR]: [
+        "students:read:referred",
+        "attendance:read:referred",
+        "documents:read:counselor",
+        "documents:write:counselor",
+        "analytics:read:welfare",
+    ],
+};
+//# sourceMappingURL=roles.js.map
