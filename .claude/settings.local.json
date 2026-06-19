@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c ' *)",
+      "PowerShell(node --version)",
+      "PowerShell(npm --version)",
+      "PowerShell(npx --version)",
+      "PowerShell(cd \"C:\\\\Users\\\\setty\\\\OneDrive\\\\Desktop\\\\SPIRA\\\\apps\\\\web\"; node_modules\\\\.bin\\\\tsc --noEmit 2>&1; Write-Host \"Web typecheck exit: $LASTEXITCODE\")",
+      "PowerShell(cd \"C:\\\\Users\\\\setty\\\\OneDrive\\\\Desktop\\\\SPIRA\\\\apps\\\\api\"; Start-Process -NoNewWindow -FilePath \"pnpm\" -ArgumentList \"dev\" -RedirectStandardOutput \"$env:TEMP\\\\spira-api.log\" -RedirectStandardError \"$env:TEMP\\\\spira-api-err.log\"; Start-Sleep -Seconds 8; Get-Content \"$env:TEMP\\\\spira-api.log\" -ErrorAction SilentlyContinue; Get-Content \"$env:TEMP\\\\spira-api-err.log\" -ErrorAction SilentlyContinue | Select-Object -Last 10)",
+      "PowerShell($r = Invoke-WebRequest -Uri \"http://localhost:4000/api/v1/health\" -UseBasicParsing -ErrorAction SilentlyContinue; if \\($r\\) { $r.StatusCode; $r.Content } else { \"Not responding\" })"
+    ]
+  }
+}
