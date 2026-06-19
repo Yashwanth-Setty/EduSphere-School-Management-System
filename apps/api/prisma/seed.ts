@@ -305,6 +305,98 @@ async function main() {
     });
   }
 
+  // ─── Phase 4: Fee Plans, Invoices, Payments ────────────────────────────────
+
+  const termPlan = await prisma.feePlan.upsert({
+    where: { id: "seed-feeplan-term1" },
+    update: {},
+    create: {
+      id: "seed-feeplan-term1",
+      schoolId: school.id,
+      name: "Term 1 Tuition Fee",
+      description: "Standard term 1 tuition fee for Grade 8",
+      amount: 15000,
+      currency: "INR",
+      isActive: true,
+    },
+  });
+
+  const activityPlan = await prisma.feePlan.upsert({
+    where: { id: "seed-feeplan-activity" },
+    update: {},
+    create: {
+      id: "seed-feeplan-activity",
+      schoolId: school.id,
+      name: "Activity & Lab Fee",
+      description: "Annual activity, sports and lab fee",
+      amount: 3500,
+      currency: "INR",
+      isActive: true,
+    },
+  });
+
+  if (studentProfileRecord) {
+    // Invoice 1 — paid
+    const inv1 = await prisma.feeInvoice.upsert({
+      where: { invoiceNo: "INV-SEED-2026-0001" },
+      update: {},
+      create: {
+        feePlanId: termPlan.id,
+        studentProfileId: studentProfileRecord.id,
+        invoiceNo: "INV-SEED-2026-0001",
+        amountDue: 15000,
+        amountPaid: 15000,
+        dueDate: new Date("2026-07-15T00:00:00Z"),
+        status: "paid",
+        issuedAt: new Date("2026-06-01T00:00:00Z"),
+      },
+    });
+
+    await prisma.payment.upsert({
+      where: { id: "seed-payment-1" },
+      update: {},
+      create: {
+        id: "seed-payment-1",
+        feeInvoiceId: inv1.id,
+        amount: 15000,
+        method: "bank_transfer",
+        referenceNo: "NEFT/2026/06/001",
+        status: "completed",
+        paidAt: new Date("2026-06-10T10:00:00Z"),
+      },
+    });
+
+    // Invoice 2 — partial payment
+    const inv2 = await prisma.feeInvoice.upsert({
+      where: { invoiceNo: "INV-SEED-2026-0002" },
+      update: {},
+      create: {
+        feePlanId: activityPlan.id,
+        studentProfileId: studentProfileRecord.id,
+        invoiceNo: "INV-SEED-2026-0002",
+        amountDue: 3500,
+        amountPaid: 2000,
+        dueDate: new Date("2026-07-31T00:00:00Z"),
+        status: "partial",
+        issuedAt: new Date("2026-06-05T00:00:00Z"),
+      },
+    });
+
+    await prisma.payment.upsert({
+      where: { id: "seed-payment-2" },
+      update: {},
+      create: {
+        id: "seed-payment-2",
+        feeInvoiceId: inv2.id,
+        amount: 2000,
+        method: "cash",
+        referenceNo: "CASH-001",
+        status: "completed",
+        paidAt: new Date("2026-06-20T11:30:00Z"),
+      },
+    });
+  }
+
   console.log("Seed complete. Demo accounts:");
   console.log("  admin@spira.school / Admin@1234!");
   console.log("  principal@spira.school / Principal@1234!");

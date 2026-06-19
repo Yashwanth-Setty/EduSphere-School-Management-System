@@ -13,6 +13,7 @@ import { HealthModule } from "./modules/health/health.module";
 import { AssignmentsModule } from "./modules/assignments/assignments.module";
 import { ExamsModule } from "./modules/exams/exams.module";
 import { GradeScalesModule } from "./modules/grade-scales/grade-scales.module";
+import { FeesModule } from "./modules/fees/fees.module";
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { GradeScalesModule } from "./modules/grade-scales/grade-scales.module";
     AssignmentsModule,
     ExamsModule,
     GradeScalesModule,
+    FeesModule,
   ],
 })
 export class AppModule {}
