@@ -66,9 +66,10 @@ async function main() {
     password: string,
     roleId: string,
   ) => {
+    const passwordHash = await hash(password);
     return prisma.user.upsert({
       where: { schoolId_email: { schoolId: school.id, email } },
-      update: {},
+      update: { passwordHash },
       create: {
         schoolId: school.id,
         email,
@@ -79,11 +80,11 @@ async function main() {
     });
   };
 
-  await createUser("admin@mail.com", "SPIRA Admin", "1234", adminRole!.id);
-  await createUser("principal@mail.com", "Dr. Meena Sharma", "1234", principalRole!.id);
-  const teacher = await createUser("teacher@mail.com", "Raj Kumar", "1234", teacherRole!.id);
-  await createUser("accountant@mail.com", "Priya Accounts", "1234", accountantRole!.id);
-  await createUser("counselor@mail.com", "Sunita Counsel", "1234", counselorRole!.id);
+  await createUser("admin@mail.com", "SPIRA Admin", "Password@123", adminRole!.id);
+  await createUser("principal@mail.com", "Dr. Meena Sharma", "Password@123", principalRole!.id);
+  const teacher = await createUser("teacher@mail.com", "Raj Kumar", "Password@123", teacherRole!.id);
+  await createUser("accountant@mail.com", "Priya Accounts", "Password@123", accountantRole!.id);
+  await createUser("counselor@mail.com", "Sunita Counsel", "Password@123", counselorRole!.id);
 
   // Staff profile for teacher
   await prisma.staffProfile.upsert({
@@ -102,7 +103,7 @@ async function main() {
   });
 
   // Student user + profile
-  const studentUser = await createUser("student@mail.com", "Ava Patel", "1234", studentRole!.id);
+  const studentUser = await createUser("student@mail.com", "Ava Patel", "Password@123", studentRole!.id);
   await prisma.studentProfile.upsert({
     where: { userId: studentUser.id },
     update: {},
@@ -119,7 +120,7 @@ async function main() {
   });
 
   // Parent user + profile
-  const parentUser = await createUser("parent@mail.com", "Anjali Patel", "1234", parentRole!.id);
+  const parentUser = await createUser("parent@mail.com", "Anjali Patel", "Password@123", parentRole!.id);
   const parentProfile = await prisma.parentProfile.upsert({
     where: { userId: parentUser.id },
     update: {},
@@ -476,7 +477,7 @@ async function main() {
     }
   }
 
-  console.log("Seed complete. Demo accounts (school code: 0000 / password: 1234):");
+  console.log("Seed complete. Demo accounts (school code: 0000 / password: Password@123):");
   console.log("  admin@mail.com");
   console.log("  student@mail.com");
   console.log("  parent@mail.com");
