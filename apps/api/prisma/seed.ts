@@ -397,6 +397,85 @@ async function main() {
     });
   }
 
+  // ─── Phase 5: Documents & Announcements ────────────────────────────────────
+
+  const adminUser = await prisma.user.findUnique({ where: { schoolId_email: { schoolId: school.id, email: "admin@spira.school" } } });
+
+  if (adminUser) {
+    // Documents — one per visibility scope
+    const docs = [
+      { id: "seed-doc-policy", category: "policy", title: "Student Code of Conduct 2026-27", storageKey: "docs/policy/code-of-conduct-2026.pdf", mimeType: "application/pdf", sizeBytes: 245760, visibilityScope: "school_admin" },
+      { id: "seed-doc-circular", category: "circular", title: "Term 1 Academic Calendar", storageKey: "docs/circulars/academic-calendar-t1.pdf", mimeType: "application/pdf", sizeBytes: 102400, visibilityScope: "student" },
+      { id: "seed-doc-section", category: "circular", title: "Grade 8-A Timetable Revision", storageKey: "docs/section/8a-timetable-rev1.pdf", mimeType: "application/pdf", sizeBytes: 51200, visibilityScope: "section" },
+      { id: "seed-doc-finance", category: "finance", title: "Fee Collection Report June 2026", storageKey: "docs/finance/fee-report-jun-2026.xlsx", mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", sizeBytes: 81920, visibilityScope: "finance" },
+      { id: "seed-doc-counselor", category: "counselor", title: "Student Wellbeing Guidelines", storageKey: "docs/counselor/wellbeing-guide.pdf", mimeType: "application/pdf", sizeBytes: 163840, visibilityScope: "counselor" },
+      { id: "seed-doc-report", category: "report_card", title: "Ava Patel – Term 1 Report Card", storageKey: "docs/reports/ava-patel-t1-2026.pdf", mimeType: "application/pdf", sizeBytes: 92160, visibilityScope: "student" },
+    ];
+    for (const d of docs) {
+      await prisma.document.upsert({
+        where: { id: d.id },
+        update: {},
+        create: { ...d, schoolId: school.id, uploadedById: adminUser.id, tags: [] },
+      });
+    }
+
+    // Announcements
+    const announcements = [
+      {
+        id: "seed-ann-school",
+        title: "Welcome to the 2026-27 Academic Year!",
+        body: "We are delighted to welcome all students, staff and parents to the new academic year. Please review the updated code of conduct and academic calendar shared in the Documents section.",
+        audienceScope: "school",
+        channel: "in_app",
+        isPublished: true,
+        publishedAt: new Date("2026-06-01T08:00:00Z"),
+      },
+      {
+        id: "seed-ann-students",
+        title: "Term 1 Exam Schedule Released",
+        body: "The Term 1 mid-term examination schedule has been published. Students are advised to check their exam timetable and prepare accordingly. Best of luck!",
+        audienceScope: "students",
+        channel: "in_app",
+        isPublished: true,
+        publishedAt: new Date("2026-06-10T09:00:00Z"),
+      },
+      {
+        id: "seed-ann-parents",
+        title: "Parent-Teacher Meeting – 5 July 2026",
+        body: "We invite all parents to attend the Parent-Teacher Meeting scheduled for Saturday, 5 July 2026 from 9:00 AM to 1:00 PM. Slot bookings will open on the portal shortly.",
+        audienceScope: "parents",
+        channel: "in_app",
+        isPublished: true,
+        publishedAt: new Date("2026-06-15T10:00:00Z"),
+      },
+      {
+        id: "seed-ann-teachers",
+        title: "Staff Development Workshop – 28 June",
+        body: "All teaching staff are required to attend the professional development workshop on 28 June 2026. Agenda will be shared via email. Please confirm attendance by 22 June.",
+        audienceScope: "teachers",
+        channel: "in_app",
+        isPublished: true,
+        publishedAt: new Date("2026-06-18T08:30:00Z"),
+      },
+      {
+        id: "seed-ann-draft",
+        title: "Upcoming Sports Day – Draft",
+        body: "Sports Day is tentatively planned for 15 August. Details TBD.",
+        audienceScope: "school",
+        channel: "in_app",
+        isPublished: false,
+        publishedAt: null,
+      },
+    ];
+    for (const a of announcements) {
+      await prisma.announcement.upsert({
+        where: { id: a.id },
+        update: {},
+        create: { ...a, schoolId: school.id, authorId: adminUser.id },
+      });
+    }
+  }
+
   console.log("Seed complete. Demo accounts:");
   console.log("  admin@spira.school / Admin@1234!");
   console.log("  principal@spira.school / Principal@1234!");
