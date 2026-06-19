@@ -1,5 +1,9 @@
 version: "3.9"
 
+# ── Development services ──────────────────────────────────────────────────────
+# For production, use managed Postgres and Redis instead of containers.
+# Do NOT expose port 5432/6379 publicly in production.
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -9,7 +13,7 @@ services:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: app
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"   # bind to loopback only
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -17,21 +21,30 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
 
   redis:
     image: redis:7-alpine
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"   # bind to loopback only
     volumes:
       - redis_data:/data
-    command: redis-server --save 60 1 --loglevel warning
+    command: >
+      redis-server
+      --save 60 1
+      --loglevel warning
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 5s
 
 volumes:
   postgres_data:
+    driver: local
   redis_data:
+    driver: local
