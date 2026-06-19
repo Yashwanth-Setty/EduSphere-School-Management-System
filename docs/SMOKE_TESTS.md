@@ -22,7 +22,7 @@ Run these checks after every deployment to verify the golden paths work end-to-e
 
 | # | Step | Expected |
 |---|------|---------|
-| 2.1 | POST `/auth/login` with `admin@spira.school` / `Admin@1234!` | `200` with `accessToken` + `refreshToken` |
+| 2.1 | POST `/auth/login` with `admin@mail.com` / `1234` (school code `0000`) | `200` with `accessToken` + `refreshToken` |
 | 2.2 | POST `/auth/login` with wrong password | `401` |
 | 2.3 | GET `/students` with no token | `401` |
 | 2.4 | POST `/auth/refresh` with valid refreshToken | `200` with new token pair |
@@ -35,7 +35,7 @@ Run these checks after every deployment to verify the golden paths work end-to-e
 
 | # | Step | Expected |
 |---|------|---------|
-| 3.1 | Login as **Student** (`ava.patel@student.spira`), visit `/analytics` | Redirected or `403` |
+| 3.1 | Login as **Student** (`student@mail.com`), visit `/analytics` | Redirected or `403` |
 | 3.2 | As **Student**, `GET /fees/plans` | `403` |
 | 3.3 | As **Parent**, `GET /attendance/sessions` | `403` |
 | 3.4 | As **Teacher**, `DELETE /students/{id}` | `403` |
@@ -133,7 +133,7 @@ Run these checks after every deployment to verify the golden paths work end-to-e
 
 ### 12.A: Teacher marks attendance
 
-1. Login as `teacher@spira.school`
+1. Login as `teacher@mail.com` / `1234` / school `0000`
 2. Navigate to `/attendance/new`
 3. Create session (section 8-A, today, period 1)
 4. Mark 3 students present, 1 absent
@@ -142,7 +142,7 @@ Run these checks after every deployment to verify the golden paths work end-to-e
 
 ### 12.B: Student checks results
 
-1. Login as `ava.patel@student.spira`
+1. Login as `student@mail.com` / `1234` / school `0000`
 2. Navigate to `/exams`
 3. Verify own results visible
 4. Navigate to `/fees` → own invoices visible
@@ -150,7 +150,7 @@ Run these checks after every deployment to verify the golden paths work end-to-e
 
 ### 12.C: Admin runs AI + checks dashboard
 
-1. Login as `admin@spira.school`
+1. Login as `admin@mail.com` / `1234` / school `0000`
 2. Navigate to `/ai`, run both Attendance Risk and Performance Summary
 3. Navigate to `/ai/recommendations` → rows appear
 4. Navigate to `/ai/audit` → both run entries appear

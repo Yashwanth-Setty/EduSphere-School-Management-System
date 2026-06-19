@@ -14,10 +14,10 @@ async function main() {
 
   // Demo school
   const school = await prisma.school.upsert({
-    where: { code: "spira-demo" },
+    where: { code: "0000" },
     update: {},
     create: {
-      code: "spira-demo",
+      code: "0000",
       name: "SPIRA Demo School",
       address: "123 Education Lane, Knowledge City",
       timezone: "UTC",
@@ -79,11 +79,11 @@ async function main() {
     });
   };
 
-  await createUser("admin@spira.school", "SPIRA Admin", "Admin@1234!", adminRole!.id);
-  await createUser("principal@spira.school", "Dr. Meena Sharma", "Principal@1234!", principalRole!.id);
-  const teacher = await createUser("teacher@spira.school", "Raj Kumar", "Teacher@1234!", teacherRole!.id);
-  await createUser("accountant@spira.school", "Priya Accounts", "Account@1234!", accountantRole!.id);
-  await createUser("counselor@spira.school", "Sunita Counsel", "Counsel@1234!", counselorRole!.id);
+  await createUser("admin@mail.com", "SPIRA Admin", "1234", adminRole!.id);
+  await createUser("principal@mail.com", "Dr. Meena Sharma", "1234", principalRole!.id);
+  const teacher = await createUser("teacher@mail.com", "Raj Kumar", "1234", teacherRole!.id);
+  await createUser("accountant@mail.com", "Priya Accounts", "1234", accountantRole!.id);
+  await createUser("counselor@mail.com", "Sunita Counsel", "1234", counselorRole!.id);
 
   // Staff profile for teacher
   await prisma.staffProfile.upsert({
@@ -102,7 +102,7 @@ async function main() {
   });
 
   // Student user + profile
-  const studentUser = await createUser("ava.patel@student.spira", "Ava Patel", "Student@1234!", studentRole!.id);
+  const studentUser = await createUser("student@mail.com", "Ava Patel", "1234", studentRole!.id);
   await prisma.studentProfile.upsert({
     where: { userId: studentUser.id },
     update: {},
@@ -119,7 +119,7 @@ async function main() {
   });
 
   // Parent user + profile
-  const parentUser = await createUser("parent@spira.school", "Anjali Patel", "Parent@1234!", parentRole!.id);
+  const parentUser = await createUser("parent@mail.com", "Anjali Patel", "1234", parentRole!.id);
   const parentProfile = await prisma.parentProfile.upsert({
     where: { userId: parentUser.id },
     update: {},
@@ -399,7 +399,7 @@ async function main() {
 
   // ─── Phase 5: Documents & Announcements ────────────────────────────────────
 
-  const adminUser = await prisma.user.findUnique({ where: { schoolId_email: { schoolId: school.id, email: "admin@spira.school" } } });
+  const adminUser = await prisma.user.findUnique({ where: { schoolId_email: { schoolId: school.id, email: "admin@mail.com" } } });
 
   if (adminUser) {
     // Documents — one per visibility scope
@@ -476,15 +476,11 @@ async function main() {
     }
   }
 
-  console.log("Seed complete. Demo accounts:");
-  console.log("  admin@spira.school / Admin@1234!");
-  console.log("  principal@spira.school / Principal@1234!");
-  console.log("  teacher@spira.school / Teacher@1234!");
-  console.log("  student: ava.patel@student.spira / Student@1234!");
-  console.log("  parent@spira.school / Parent@1234!");
-  console.log("  accountant@spira.school / Account@1234!");
-  console.log("  counselor@spira.school / Counsel@1234!");
-  console.log("  School code: spira-demo");
+  console.log("Seed complete. Demo accounts (school code: 0000 / password: 1234):");
+  console.log("  admin@mail.com");
+  console.log("  student@mail.com");
+  console.log("  parent@mail.com");
+  console.log("  (also: principal@mail.com, teacher@mail.com, accountant@mail.com, counselor@mail.com)");
 }
 
 main()
