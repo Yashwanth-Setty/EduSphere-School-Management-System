@@ -17,6 +17,7 @@ import { FeesModule } from "./modules/fees/fees.module";
 import { DocumentsModule } from "./modules/documents/documents.module";
 import { AnnouncementsModule } from "./modules/announcements/announcements.module";
 import { AnalyticsModule } from "./modules/analytics/analytics.module";
+import { AiModule } from "./modules/ai/ai.module";
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AnalyticsModule } from "./modules/analytics/analytics.module";
     DocumentsModule,
     AnnouncementsModule,
     AnalyticsModule,
+    AiModule,
   ],
 })
 export class AppModule {}

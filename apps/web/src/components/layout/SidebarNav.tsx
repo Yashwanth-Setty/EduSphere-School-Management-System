@@ -27,6 +27,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Communication", href: "/announcements", icon: "📢", roles: Object.values(Role) },
   { label: "Documents", href: "/documents", icon: "📄", roles: Object.values(Role) },
   { label: "Analytics", href: "/analytics", icon: "📈", roles: [Role.ADMIN, Role.PRINCIPAL, Role.ACCOUNTANT, Role.COUNSELOR] },
+  { label: "AI Insights", href: "/ai", icon: "🤖", roles: [Role.ADMIN, Role.PRINCIPAL, Role.COUNSELOR] },
   { label: "Parent Portal", href: "/parent", icon: "👨‍👩‍👧", roles: [Role.PARENT] },
 ];
 
