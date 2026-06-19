@@ -7,6 +7,7 @@ import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
 import { Role } from "@spira/types";
+import { canCreate } from "@/lib/permissions";
 
 interface Announcement {
   id: string; title: string; body: string;
@@ -25,8 +26,6 @@ const SCOPE_STYLE: Record<string, string> = {
   section:  "bg-purple-100 text-purple-700",
 };
 
-const CREATORS = [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER];
-
 export default function AnnouncementsPage() {
   const { user } = useAuth();
   const [page, setPage] = useState(1);
@@ -34,8 +33,9 @@ export default function AnnouncementsPage() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
-  const canCreate = (user?.roles ?? []).some((r) => CREATORS.includes(r as Role));
-  const canSeeDrafts = canCreate;
+  const roles = (user?.roles ?? []) as Role[];
+  const userCanCreate = canCreate(roles, "announcements");
+  const canSeeDrafts = userCanCreate;
 
   const params = new URLSearchParams({ page: String(page), pageSize: "20" });
   if (showDrafts) params.set("includeUnpublished", "true");
@@ -64,7 +64,7 @@ export default function AnnouncementsPage() {
               Show drafts
             </label>
           )}
-          {canCreate && (
+          {userCanCreate && (
             <Link
               href="/announcements/new"
               className="px-4 py-2 text-sm font-medium text-white bg-spira-700 rounded-md hover:bg-spira-800 transition-colors"

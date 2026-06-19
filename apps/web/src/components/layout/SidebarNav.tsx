@@ -11,24 +11,90 @@ interface NavItem {
   href: string;
   icon: string;
   roles: Role[];
-  badge?: string;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard", icon: "⬛", roles: Object.values(Role) },
-  { label: "Students", href: "/students", icon: "🎓", roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER] },
-  { label: "Staff", href: "/staff", icon: "👨‍🏫", roles: [Role.ADMIN, Role.PRINCIPAL] },
-  { label: "Attendance", href: "/attendance", icon: "📋", roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER] },
-  { label: "Timetable", href: "/timetable", icon: "📅", roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT] },
-  { label: "Courses", href: "/courses", icon: "📚", roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT] },
-  { label: "Assignments", href: "/assignments", icon: "📝", roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT] },
-  { label: "Exams & Results", href: "/exams", icon: "📊", roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT] },
-  { label: "Fees", href: "/fees", icon: "💰", roles: [Role.ADMIN, Role.ACCOUNTANT, Role.PARENT, Role.STUDENT] },
-  { label: "Communication", href: "/announcements", icon: "📢", roles: Object.values(Role) },
-  { label: "Documents", href: "/documents", icon: "📄", roles: Object.values(Role) },
-  { label: "Analytics", href: "/analytics", icon: "📈", roles: [Role.ADMIN, Role.PRINCIPAL, Role.ACCOUNTANT, Role.COUNSELOR] },
-  { label: "AI Insights", href: "/ai", icon: "🤖", roles: [Role.ADMIN, Role.PRINCIPAL, Role.COUNSELOR] },
-  { label: "Parent Portal", href: "/parent", icon: "👨‍👩‍👧", roles: [Role.PARENT] },
+  {
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: "⬛",
+    roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT, Role.ACCOUNTANT, Role.COUNSELOR],
+  },
+  {
+    label: "Students",
+    href: "/students",
+    icon: "🎓",
+    roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER],
+  },
+  {
+    label: "Staff",
+    href: "/staff",
+    icon: "👨‍🏫",
+    roles: [Role.ADMIN, Role.PRINCIPAL],
+  },
+  {
+    label: "Attendance",
+    href: "/attendance",
+    icon: "📋",
+    // Students/Parents view their own attendance differently; session management is staff-only
+    roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER],
+  },
+  {
+    label: "Timetable",
+    href: "/timetable",
+    icon: "📅",
+    roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT],
+  },
+  {
+    label: "Courses",
+    href: "/courses",
+    icon: "📚",
+    // Students don't manage courses; parents don't need this view
+    roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER],
+  },
+  {
+    label: "Assignments",
+    href: "/assignments",
+    icon: "📝",
+    roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT],
+  },
+  {
+    label: "Exams & Results",
+    href: "/exams",
+    icon: "📊",
+    roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT],
+  },
+  {
+    label: "Fees",
+    href: "/fees",
+    icon: "💰",
+    roles: [Role.ADMIN, Role.ACCOUNTANT, Role.STUDENT, Role.PARENT],
+  },
+  {
+    label: "Communication",
+    href: "/announcements",
+    icon: "📢",
+    roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT, Role.ACCOUNTANT, Role.COUNSELOR],
+  },
+  {
+    label: "Documents",
+    href: "/documents",
+    icon: "📄",
+    roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT, Role.ACCOUNTANT, Role.COUNSELOR],
+  },
+  {
+    label: "Analytics",
+    href: "/analytics",
+    icon: "📈",
+    roles: [Role.ADMIN, Role.PRINCIPAL, Role.ACCOUNTANT, Role.COUNSELOR],
+  },
+  {
+    label: "AI Insights",
+    href: "/ai",
+    icon: "🤖",
+    // Counselor can view recommendations but not run jobs — managed per-page
+    roles: [Role.ADMIN, Role.PRINCIPAL, Role.COUNSELOR],
+  },
 ];
 
 interface SidebarNavProps {
@@ -81,7 +147,7 @@ export function SidebarNav({ collapsed, onToggle }: SidebarNavProps) {
                   aria-current={active ? "page" : undefined}
                   title={collapsed ? item.label : undefined}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors group",
+                    "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
                     active
                       ? "bg-spira-500/10 text-spira-900"
                       : "text-text-700 hover:bg-surface-50 hover:text-text-900",
@@ -90,11 +156,6 @@ export function SidebarNav({ collapsed, onToggle }: SidebarNavProps) {
                 >
                   <span className="text-base shrink-0">{item.icon}</span>
                   {!collapsed && <span className="truncate">{item.label}</span>}
-                  {!collapsed && item.badge && (
-                    <span className="ml-auto text-xs font-medium bg-spira-500/10 text-spira-800 px-1.5 py-0.5 rounded-full">
-                      {item.badge}
-                    </span>
-                  )}
                 </Link>
               </li>
             );

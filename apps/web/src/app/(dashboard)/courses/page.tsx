@@ -5,6 +5,9 @@ import Link from "next/link";
 import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
+import { useAuth } from "@/hooks/useAuth";
+import { Role } from "@spira/types";
+import { canCreate } from "@/lib/permissions";
 
 interface Course {
   id: string;
@@ -23,6 +26,7 @@ interface PagedCourses {
 }
 
 export default function CoursesPage() {
+  const { user } = useAuth();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [mounted, setMounted] = useState(false);
@@ -30,11 +34,11 @@ export default function CoursesPage() {
   useEffect(() => { setMounted(true); }, []);
 
   const hasToken = mounted && !!getAccessToken();
+  const roles = (user?.roles ?? []) as Role[];
+  const canNew = canCreate(roles, "courses");
 
   const { data, isLoading } = useSWR<PagedCourses>(
-    hasToken
-      ? `/courses?page=${page}&pageSize=20${search ? `&search=${encodeURIComponent(search)}` : ""}`
-      : null,
+    hasToken ? `/courses?page=${page}&pageSize=20${search ? `&search=${encodeURIComponent(search)}` : ""}` : null,
     (url: string) => apiClient.get<PagedCourses>(url),
   );
 
@@ -54,12 +58,11 @@ export default function CoursesPage() {
             aria-label="Search courses"
             className="px-3 py-2 text-sm border border-border rounded-md w-60 focus:outline-none focus:ring-2 focus:ring-spira-700 bg-white"
           />
-          <Link
-            href="/courses/new"
-            className="px-4 py-2 text-sm font-medium text-white bg-spira-700 rounded-md hover:bg-spira-800 transition-colors"
-          >
-            + New course
-          </Link>
+          {canNew && (
+            <Link href="/courses/new" className="px-4 py-2 text-sm font-medium text-white bg-spira-700 rounded-md hover:bg-spira-800 transition-colors">
+              + New course
+            </Link>
+          )}
         </div>
       </div>
 
@@ -81,18 +84,12 @@ export default function CoursesPage() {
                 ? Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="border-b border-surface-100">
                     {Array.from({ length: 6 }).map((_, j) => (
-                      <td key={j} className="px-4 py-3">
-                        <div className="h-4 bg-surface-100 rounded animate-pulse w-24" />
-                      </td>
+                      <td key={j} className="px-4 py-3"><div className="h-4 bg-surface-100 rounded animate-pulse w-24" /></td>
                     ))}
                   </tr>
                 ))
                 : data?.data.length === 0
-                  ? (
-                    <tr>
-                      <td colSpan={6} className="px-4 py-12 text-center text-text-500">No courses found</td>
-                    </tr>
-                  )
+                  ? <tr><td colSpan={6} className="px-4 py-12 text-center text-text-500">No courses found</td></tr>
                   : data?.data.map((c) => (
                     <tr key={c.id} className="border-b border-surface-100 hover:bg-surface-50 transition-colors">
                       <td className="px-4 py-3 font-mono text-xs font-medium text-spira-800">{c.code}</td>
@@ -112,23 +109,12 @@ export default function CoursesPage() {
             </tbody>
           </table>
         </div>
-
         {data && data.totalPages > 1 && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-surface-100">
             <p className="text-xs text-text-500">Page {data.page} of {data.totalPages} · {data.total} courses</p>
             <div className="flex items-center gap-2">
-              <button
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors"
-                aria-label="Previous page"
-              >Previous</button>
-              <button
-                disabled={page >= data.totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors"
-                aria-label="Next page"
-              >Next</button>
+              <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors" aria-label="Previous page">Previous</button>
+              <button disabled={page >= data.totalPages} onClick={() => setPage((p) => p + 1)} className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors" aria-label="Next page">Next</button>
             </div>
           </div>
         )}

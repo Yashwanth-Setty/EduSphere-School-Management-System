@@ -5,6 +5,9 @@ import Link from "next/link";
 import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
+import { useAuth } from "@/hooks/useAuth";
+import { Role } from "@spira/types";
+import { canCreate } from "@/lib/permissions";
 
 interface AttendanceSession {
   id: string;
@@ -24,13 +27,16 @@ interface PagedSessions {
 }
 
 export default function AttendancePage() {
+  const { user } = useAuth();
   const [page, setPage] = useState(1);
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
   const hasToken = mounted && !!getAccessToken();
+  const roles = (user?.roles ?? []) as Role[];
+  const canOpen = canCreate(roles, "attendance");
 
-  const { data, isLoading, mutate } = useSWR<PagedSessions>(
+  const { data, isLoading } = useSWR<PagedSessions>(
     hasToken ? `/attendance/sessions?page=${page}&pageSize=20` : null,
     (url: string) => apiClient.get<PagedSessions>(url),
   );
@@ -42,12 +48,11 @@ export default function AttendancePage() {
           <h1 className="text-2xl font-semibold text-text-900">Attendance</h1>
           <p className="text-text-500 text-sm mt-0.5">{data?.total ?? 0} sessions recorded</p>
         </div>
-        <Link
-          href="/attendance/new"
-          className="px-4 py-2 text-sm font-medium text-white bg-spira-700 rounded-md hover:bg-spira-800 transition-colors"
-        >
-          + Open session
-        </Link>
+        {canOpen && (
+          <Link href="/attendance/new" className="px-4 py-2 text-sm font-medium text-white bg-spira-700 rounded-md hover:bg-spira-800 transition-colors">
+            + Open session
+          </Link>
+        )}
       </div>
 
       <div className="bg-white rounded-lg border border-border shadow-sm overflow-hidden">
@@ -69,9 +74,7 @@ export default function AttendancePage() {
                 ? Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="border-b border-surface-100">
                     {Array.from({ length: 7 }).map((_, j) => (
-                      <td key={j} className="px-4 py-3">
-                        <div className="h-4 bg-surface-100 rounded animate-pulse w-20" />
-                      </td>
+                      <td key={j} className="px-4 py-3"><div className="h-4 bg-surface-100 rounded animate-pulse w-20" /></td>
                     ))}
                   </tr>
                 ))
@@ -93,7 +96,7 @@ export default function AttendancePage() {
                       </td>
                       <td className="px-4 py-3">
                         <Link href={`/attendance/${s.id}`} className="text-xs text-spira-700 hover:underline">
-                          {s.submittedAt ? "View" : "Mark"}
+                          {canOpen && !s.submittedAt ? "Mark" : "View"}
                         </Link>
                       </td>
                     </tr>

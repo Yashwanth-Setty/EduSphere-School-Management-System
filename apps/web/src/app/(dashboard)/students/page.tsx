@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
+import { useAuth } from "@/hooks/useAuth";
+import { Role } from "@spira/types";
+import { canCreate } from "@/lib/permissions";
 
 interface Student {
   id: string;
@@ -24,6 +27,7 @@ interface PagedStudents {
 }
 
 export default function StudentsPage() {
+  const { user } = useAuth();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [mounted, setMounted] = useState(false);
@@ -31,6 +35,8 @@ export default function StudentsPage() {
   useEffect(() => { setMounted(true); }, []);
 
   const hasToken = mounted && !!getAccessToken();
+  const roles = (user?.roles ?? []) as Role[];
+  const canAdd = canCreate(roles, "students");
 
   const { data, isLoading } = useSWR<PagedStudents>(
     hasToken ? `/students?page=${page}&pageSize=20${search ? `&search=${encodeURIComponent(search)}` : ""}` : null,
@@ -39,7 +45,6 @@ export default function StudentsPage() {
 
   return (
     <div className="p-6 space-y-5">
-      {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-text-900">Students</h1>
@@ -54,36 +59,25 @@ export default function StudentsPage() {
             aria-label="Search students"
             className="px-3 py-2 text-sm border border-border rounded-md w-64 focus:outline-none focus:ring-2 focus:ring-spira-700 bg-white"
           />
-          <button className="px-4 py-2 text-sm font-medium text-white bg-spira-700 rounded-md hover:bg-spira-800 transition-colors">
-            + Add student
-          </button>
+          {canAdd && (
+            <button className="px-4 py-2 text-sm font-medium text-white bg-spira-700 rounded-md hover:bg-spira-800 transition-colors">
+              + Add student
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Table */}
       <div className="bg-white rounded-lg border border-border shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm" role="grid" aria-label="Students list">
             <thead>
               <tr className="border-b border-surface-100 bg-surface-50">
-                <th scope="col" className="text-left px-4 py-3 font-medium text-text-500 text-xs uppercase tracking-wide">
-                  Admission No.
-                </th>
-                <th scope="col" className="text-left px-4 py-3 font-medium text-text-500 text-xs uppercase tracking-wide">
-                  Name
-                </th>
-                <th scope="col" className="text-left px-4 py-3 font-medium text-text-500 text-xs uppercase tracking-wide">
-                  Section
-                </th>
-                <th scope="col" className="text-left px-4 py-3 font-medium text-text-500 text-xs uppercase tracking-wide">
-                  Gender
-                </th>
-                <th scope="col" className="text-left px-4 py-3 font-medium text-text-500 text-xs uppercase tracking-wide">
-                  Status
-                </th>
-                <th scope="col" className="text-left px-4 py-3 font-medium text-text-500 text-xs uppercase tracking-wide">
-                  Email
-                </th>
+                <th scope="col" className="text-left px-4 py-3 font-medium text-text-500 text-xs uppercase tracking-wide">Admission No.</th>
+                <th scope="col" className="text-left px-4 py-3 font-medium text-text-500 text-xs uppercase tracking-wide">Name</th>
+                <th scope="col" className="text-left px-4 py-3 font-medium text-text-500 text-xs uppercase tracking-wide">Section</th>
+                <th scope="col" className="text-left px-4 py-3 font-medium text-text-500 text-xs uppercase tracking-wide">Gender</th>
+                <th scope="col" className="text-left px-4 py-3 font-medium text-text-500 text-xs uppercase tracking-wide">Status</th>
+                <th scope="col" className="text-left px-4 py-3 font-medium text-text-500 text-xs uppercase tracking-wide">Email</th>
               </tr>
             </thead>
             <tbody>
@@ -99,32 +93,17 @@ export default function StudentsPage() {
                 ))
               ) : data?.data.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center text-text-500">
-                    No students found
-                  </td>
+                  <td colSpan={6} className="px-4 py-12 text-center text-text-500">No students found</td>
                 </tr>
               ) : (
                 data?.data.map((s) => (
-                  <tr
-                    key={s.id}
-                    className="border-b border-surface-100 hover:bg-surface-50 cursor-pointer transition-colors"
-                    tabIndex={0}
-                    role="row"
-                  >
+                  <tr key={s.id} className="border-b border-surface-100 hover:bg-surface-50 cursor-pointer transition-colors" tabIndex={0} role="row">
                     <td className="px-4 py-3 font-mono text-xs text-text-500">{s.admissionNo}</td>
-                    <td className="px-4 py-3 font-medium text-text-900">
-                      {s.firstName} {s.lastName}
-                    </td>
+                    <td className="px-4 py-3 font-medium text-text-900">{s.firstName} {s.lastName}</td>
                     <td className="px-4 py-3 text-text-500">{s.section?.name ?? "—"}</td>
                     <td className="px-4 py-3 text-text-500 capitalize">{s.gender}</td>
                     <td className="px-4 py-3">
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                          s.enrollmentStatus === "active"
-                            ? "bg-success/10 text-success"
-                            : "bg-text-500/10 text-text-500"
-                        }`}
-                      >
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${s.enrollmentStatus === "active" ? "bg-success/10 text-success" : "bg-text-500/10 text-text-500"}`}>
                         {s.enrollmentStatus}
                       </span>
                     </td>
@@ -136,29 +115,12 @@ export default function StudentsPage() {
           </table>
         </div>
 
-        {/* Pagination */}
         {data && data.totalPages > 1 && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-surface-100">
-            <p className="text-xs text-text-500">
-              Page {data.page} of {data.totalPages} · {data.total} students
-            </p>
+            <p className="text-xs text-text-500">Page {data.page} of {data.totalPages} · {data.total} students</p>
             <div className="flex items-center gap-2">
-              <button
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors"
-                aria-label="Previous page"
-              >
-                Previous
-              </button>
-              <button
-                disabled={page >= data.totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors"
-                aria-label="Next page"
-              >
-                Next
-              </button>
+              <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors" aria-label="Previous page">Previous</button>
+              <button disabled={page >= data.totalPages} onClick={() => setPage((p) => p + 1)} className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors" aria-label="Next page">Next</button>
             </div>
           </div>
         )}

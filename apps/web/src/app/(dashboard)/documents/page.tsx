@@ -7,6 +7,7 @@ import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
 import { Role } from "@spira/types";
+import { canCreate } from "@/lib/permissions";
 
 interface Doc {
   id: string;
@@ -30,8 +31,6 @@ const SCOPE_BADGE: Record<string, string> = {
   counselor:    "bg-purple-100 text-purple-700",
 };
 
-const WRITERS = [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.COUNSELOR, Role.ACCOUNTANT];
-
 function fmtBytes(b: number) {
   if (b < 1024) return `${b} B`;
   if (b < 1024 * 1024) return `${(b / 1024).toFixed(0)} KB`;
@@ -47,7 +46,8 @@ export default function DocumentsPage() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
-  const canWrite = (user?.roles ?? []).some((r) => WRITERS.includes(r as Role));
+  const roles = (user?.roles ?? []) as Role[];
+  const canWrite = canCreate(roles, "documents");
 
   const params = new URLSearchParams({ page: String(page), pageSize: "20" });
   if (category) params.set("category", category);
