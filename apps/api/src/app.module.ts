@@ -16,6 +16,7 @@ import { GradeScalesModule } from "./modules/grade-scales/grade-scales.module";
 import { FeesModule } from "./modules/fees/fees.module";
 import { DocumentsModule } from "./modules/documents/documents.module";
 import { AnnouncementsModule } from "./modules/announcements/announcements.module";
+import { AnalyticsModule } from "./modules/analytics/analytics.module";
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { AnnouncementsModule } from "./modules/announcements/announcements.modul
     FeesModule,
     DocumentsModule,
     AnnouncementsModule,
+    AnalyticsModule,
   ],
 })
 export class AppModule {}

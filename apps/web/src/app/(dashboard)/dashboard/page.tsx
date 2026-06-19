@@ -1,10 +1,37 @@
 "use client";
 
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import useSWR from "swr";
 import { useAuth } from "@/hooks/useAuth";
 import { KpiCard } from "@/components/layout/KpiCard";
+import { apiClient } from "@/lib/api-client";
+import { getAccessToken } from "@/lib/auth";
+
+interface Overview {
+  totalStudents: number;
+  presentToday: number;
+  pendingFees: number;
+  activeAnnouncements: number;
+  totalStaff: number;
+  totalCourses: number;
+}
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
+  const { data } = useSWR<Overview>(
+    mounted && !!getAccessToken() ? "/analytics/overview" : null,
+    (url: string) => apiClient.get<Overview>(url),
+  );
+
+  const attendanceRate = data
+    ? data.totalStudents > 0
+      ? Math.round((data.presentToday / data.totalStudents) * 100)
+      : 0
+    : null;
 
   return (
     <div className="p-6 space-y-6">
@@ -18,10 +45,36 @@ export default function DashboardPage() {
 
       {/* KPI row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard label="Total Students" value="—" trend={null} icon="🎓" />
-        <KpiCard label="Present Today" value="—" trend={null} icon="✅" />
-        <KpiCard label="Pending Fees" value="—" trend={null} icon="💰" />
-        <KpiCard label="Announcements" value="—" trend={null} icon="📢" />
+        <KpiCard
+          label="Total Students"
+          value={data ? String(data.totalStudents) : "—"}
+          trend={null}
+          icon="🎓"
+        />
+        <KpiCard
+          label="Present Today"
+          value={data ? `${data.presentToday} (${attendanceRate}%)` : "—"}
+          trend={null}
+          icon="✅"
+        />
+        <KpiCard
+          label="Pending Fees"
+          value={data ? String(data.pendingFees) : "—"}
+          trend={null}
+          icon="💰"
+        />
+        <KpiCard
+          label="Announcements"
+          value={data ? String(data.activeAnnouncements) : "—"}
+          trend={null}
+          icon="📢"
+        />
+      </div>
+
+      {/* Secondary KPIs */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <KpiCard label="Active Staff" value={data ? String(data.totalStaff) : "—"} trend={null} icon="👨‍🏫" />
+        <KpiCard label="Active Courses" value={data ? String(data.totalCourses) : "—"} trend={null} icon="📚" />
       </div>
 
       {/* Content */}
@@ -51,13 +104,14 @@ export default function DashboardPage() {
           <h2 className="text-sm font-semibold text-text-900 mb-4">Quick Actions</h2>
           <div className="space-y-2">
             {QUICK_ACTIONS.map((a) => (
-              <button
+              <Link
                 key={a.label}
-                className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-text-700 hover:bg-surface-50 rounded-md transition-colors text-left"
+                href={a.href}
+                className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-text-700 hover:bg-surface-50 rounded-md transition-colors"
               >
                 <span className="text-base">{a.icon}</span>
                 {a.label}
-              </button>
+              </Link>
             ))}
           </div>
         </div>
@@ -67,9 +121,9 @@ export default function DashboardPage() {
 }
 
 const QUICK_ACTIONS = [
-  { label: "Mark attendance", icon: "📋" },
-  { label: "Create announcement", icon: "📢" },
-  { label: "Generate invoices", icon: "💰" },
-  { label: "Add student", icon: "➕" },
-  { label: "View reports", icon: "📊" },
+  { label: "Mark attendance", icon: "📋", href: "/attendance/new" },
+  { label: "Create announcement", icon: "📢", href: "/announcements/new" },
+  { label: "Generate invoices", icon: "💰", href: "/fees/new" },
+  { label: "Add student", icon: "➕", href: "/students" },
+  { label: "View reports", icon: "📊", href: "/analytics" },
 ];
