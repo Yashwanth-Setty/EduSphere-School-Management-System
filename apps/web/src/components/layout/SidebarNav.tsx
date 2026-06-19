@@ -21,6 +21,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Attendance", href: "/attendance", icon: "📋", roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER] },
   { label: "Timetable", href: "/timetable", icon: "📅", roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT] },
   { label: "Courses", href: "/courses", icon: "📚", roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT] },
+  { label: "Assignments", href: "/assignments", icon: "📝", roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT] },
   { label: "Exams & Results", href: "/exams", icon: "📊", roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT] },
   { label: "Fees", href: "/fees", icon: "💰", roles: [Role.ADMIN, Role.ACCOUNTANT, Role.PARENT, Role.STUDENT] },
   { label: "Communication", href: "/announcements", icon: "📢", roles: Object.values(Role) },

@@ -219,6 +219,92 @@ async function main() {
     });
   }
 
+  // ─── Phase 3: Assignments, Exams, Grade Scales ──────────────────────────────
+
+  // Assignment for Math offering
+  const mathAssignment = await prisma.assignment.upsert({
+    where: { id: "seed-assignment-math-1" },
+    update: {},
+    create: {
+      id: "seed-assignment-math-1",
+      courseOfferingId: mathOffering.id,
+      title: "Chapter 3 – Algebra Exercises",
+      instructions: "Complete all questions from Exercise 3A and 3B on page 42–45. Show all working steps.",
+      dueDate: new Date("2026-07-15T00:00:00Z"),
+      maxScore: 50,
+      isPublished: true,
+    },
+  });
+
+  // Submission from Ava Patel (graded)
+  if (studentProfileRecord) {
+    await prisma.submission.upsert({
+      where: { assignmentId_studentProfileId: { assignmentId: mathAssignment.id, studentProfileId: studentProfileRecord.id } },
+      update: {},
+      create: {
+        assignmentId: mathAssignment.id,
+        studentProfileId: studentProfileRecord.id,
+        fileUrl: "https://storage.example.com/submissions/ava-ch3-algebra.pdf",
+        submittedAt: new Date("2026-07-12T14:00:00Z"),
+        status: "graded",
+        grade: 44,
+        feedback: "Excellent work! Minor arithmetic error in Q3b. Otherwise perfect.",
+      },
+    });
+  }
+
+  // Exam: Mid-Term Mathematics
+  const midtermExam = await prisma.exam.upsert({
+    where: { id: "seed-exam-math-midterm" },
+    update: {},
+    create: {
+      id: "seed-exam-math-midterm",
+      courseOfferingId: mathOffering.id,
+      academicYearId: ay.id,
+      title: "Mid-Term Mathematics",
+      examType: "midterm",
+      term: "term_1",
+      weight: 1.0,
+      maxMarks: 100,
+      examDate: new Date("2026-08-20T09:00:00Z"),
+      isPublished: true,
+      publishedAt: new Date("2026-08-25T00:00:00Z"),
+    },
+  });
+
+  // Exam result for Ava Patel
+  if (studentProfileRecord) {
+    await prisma.examResult.upsert({
+      where: { examId_studentProfileId: { examId: midtermExam.id, studentProfileId: studentProfileRecord.id } },
+      update: {},
+      create: {
+        examId: midtermExam.id,
+        studentProfileId: studentProfileRecord.id,
+        marksObtained: 87,
+        grade: "A",
+        remarks: "Very good performance. Keep it up!",
+      },
+    });
+  }
+
+  // Grade scale for Grade 8
+  const gradeScales = [
+    { gradeLabel: "A+", minPercent: 90, maxPercent: 100, gradePoint: 4.0, description: "Outstanding" },
+    { gradeLabel: "A",  minPercent: 80, maxPercent: 89,  gradePoint: 3.7, description: "Excellent" },
+    { gradeLabel: "B+", minPercent: 70, maxPercent: 79,  gradePoint: 3.3, description: "Very Good" },
+    { gradeLabel: "B",  minPercent: 60, maxPercent: 69,  gradePoint: 3.0, description: "Good" },
+    { gradeLabel: "C",  minPercent: 50, maxPercent: 59,  gradePoint: 2.0, description: "Satisfactory" },
+    { gradeLabel: "D",  minPercent: 40, maxPercent: 49,  gradePoint: 1.0, description: "Pass" },
+    { gradeLabel: "F",  minPercent: 0,  maxPercent: 39,  gradePoint: 0.0, description: "Fail" },
+  ];
+  for (const gs of gradeScales) {
+    await prisma.gradeScale.upsert({
+      where: { id: `seed-gs-grade8-${gs.gradeLabel.replace("+", "plus")}` },
+      update: {},
+      create: { id: `seed-gs-grade8-${gs.gradeLabel.replace("+", "plus")}`, gradeLevelId: grade8.id, ...gs },
+    });
+  }
+
   console.log("Seed complete. Demo accounts:");
   console.log("  admin@spira.school / Admin@1234!");
   console.log("  principal@spira.school / Principal@1234!");

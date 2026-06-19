@@ -10,6 +10,9 @@ import { AttendanceModule } from "./modules/attendance/attendance.module";
 import { CoursesModule } from "./modules/courses/courses.module";
 import { TimetableModule } from "./modules/timetable/timetable.module";
 import { HealthModule } from "./modules/health/health.module";
+import { AssignmentsModule } from "./modules/assignments/assignments.module";
+import { ExamsModule } from "./modules/exams/exams.module";
+import { GradeScalesModule } from "./modules/grade-scales/grade-scales.module";
 
 @Module({
   imports: [
@@ -24,6 +27,9 @@ import { HealthModule } from "./modules/health/health.module";
     CoursesModule,
     TimetableModule,
     HealthModule,
+    AssignmentsModule,
+    ExamsModule,
+    GradeScalesModule,
   ],
 })
 export class AppModule {}
