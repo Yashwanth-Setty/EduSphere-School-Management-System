@@ -18,6 +18,8 @@ import { DocumentsModule } from "./modules/documents/documents.module";
 import { AnnouncementsModule } from "./modules/announcements/announcements.module";
 import { AnalyticsModule } from "./modules/analytics/analytics.module";
 import { AiModule } from "./modules/ai/ai.module";
+import { TransportModule } from "./modules/transport/transport.module";
+import { OnlineClassesModule } from "./modules/online-classes/online-classes.module";
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { AiModule } from "./modules/ai/ai.module";
     AnnouncementsModule,
     AnalyticsModule,
     AiModule,
+    TransportModule,
+    OnlineClassesModule,
   ],
 })
 export class AppModule {}

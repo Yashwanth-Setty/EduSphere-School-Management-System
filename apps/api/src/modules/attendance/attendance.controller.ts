@@ -18,6 +18,17 @@ import { BulkSubmitDto } from "./dto/bulk-submit.dto";
 export class AttendanceController {
   constructor(private attendance: AttendanceService) {}
 
+  @Get("my-records")
+  @Roles(Role.STUDENT, Role.PARENT)
+  @ApiOperation({ summary: "Get attendance records for the current student (or child of parent)" })
+  getMyRecords(
+    @CurrentUser() user: { id: string; schoolId: string },
+    @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query("pageSize", new DefaultValuePipe(30), ParseIntPipe) pageSize: number,
+  ) {
+    return this.attendance.getMyRecords(user.schoolId, user.id, page, pageSize);
+  }
+
   @Get("sessions")
   @Roles(Role.ADMIN, Role.PRINCIPAL, Role.TEACHER)
   @ApiOperation({ summary: "List attendance sessions" })

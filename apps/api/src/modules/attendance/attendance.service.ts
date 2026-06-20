@@ -11,6 +11,30 @@ interface BulkRecord {
 export class AttendanceService {
   constructor(private prisma: PrismaService) {}
 
+  async getMyRecords(schoolId: string, userId: string, page = 1, pageSize = 30) {
+    let student = await this.prisma.studentProfile.findFirst({ where: { userId, schoolId } });
+    // Parent: get first linked child
+    if (!student) {
+      const parent = await this.prisma.parentProfile.findFirst({ where: { userId } });
+      if (parent) {
+        const link = await this.prisma.parentStudentLink.findFirst({ where: { parentProfileId: parent.id, isActive: true } });
+        if (link) student = await this.prisma.studentProfile.findUnique({ where: { id: link.studentProfileId } });
+      }
+    }
+    if (!student) return { data: [], total: 0 };
+    const [data, total] = await Promise.all([
+      this.prisma.attendanceRecord.findMany({
+        where: { studentProfileId: student.id },
+        include: { session: { select: { sessionDate: true, periodNumber: true } } },
+        orderBy: { session: { sessionDate: "desc" } },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      this.prisma.attendanceRecord.count({ where: { studentProfileId: student.id } }),
+    ]);
+    return { data, total };
+  }
+
   async listSessions(schoolId: string, sectionId?: string, date?: string, page = 1, pageSize = 20) {
     const where = {
       schoolId,

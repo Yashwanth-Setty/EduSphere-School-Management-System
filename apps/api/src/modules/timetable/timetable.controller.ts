@@ -18,6 +18,13 @@ import { UpdateSlotDto } from "./dto/update-slot.dto";
 export class TimetableController {
   constructor(private timetable: TimetableService) {}
 
+  @Get("slots")
+  @Roles(Role.STUDENT, Role.PARENT)
+  @ApiOperation({ summary: "Get timetable slots for the current student" })
+  getSlots(@CurrentUser() user: { id: string; schoolId: string }) {
+    return this.timetable.getSlotsForStudent(user.schoolId, user.id);
+  }
+
   @Get("sections")
   @Roles(Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT)
   @ApiOperation({ summary: "List all sections for section picker" })

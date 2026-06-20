@@ -174,16 +174,69 @@ async function main() {
     create: { courseId: createdCourses["SCI-8"], sectionId: section.id, teacherId: staffProfile?.id, academicTerm: "term_1" },
   });
 
-  // Timetable slots for 8-A term_1 (Mon–Fri, periods 1–3)
-  const slots = [
-    { dayOfWeek: 0, periodNumber: 1, startTime: "08:00", endTime: "08:45", courseOfferingId: mathOffering.id, roomLabel: "Room 101" },
-    { dayOfWeek: 0, periodNumber: 2, startTime: "08:50", endTime: "09:35", courseOfferingId: sciOffering.id, roomLabel: "Lab A" },
-    { dayOfWeek: 1, periodNumber: 1, startTime: "08:00", endTime: "08:45", courseOfferingId: sciOffering.id, roomLabel: "Lab A" },
-    { dayOfWeek: 1, periodNumber: 2, startTime: "08:50", endTime: "09:35", courseOfferingId: mathOffering.id, roomLabel: "Room 101" },
-    { dayOfWeek: 2, periodNumber: 1, startTime: "08:00", endTime: "08:45", courseOfferingId: mathOffering.id, roomLabel: "Room 101" },
-    { dayOfWeek: 3, periodNumber: 1, startTime: "08:00", endTime: "08:45", courseOfferingId: sciOffering.id, roomLabel: "Lab A" },
-    { dayOfWeek: 4, periodNumber: 1, startTime: "08:00", endTime: "08:45", courseOfferingId: mathOffering.id, roomLabel: "Room 101" },
+  // Additional course offerings for ENG and SOC
+  const engOffering = await prisma.courseOffering.upsert({
+    where: { courseId_sectionId_academicTerm: { courseId: createdCourses["ENG-8"], sectionId: section.id, academicTerm: "term_1" } },
+    update: {},
+    create: { courseId: createdCourses["ENG-8"], sectionId: section.id, teacherId: staffProfile?.id, academicTerm: "term_1" },
+  });
+  const socOffering = await prisma.courseOffering.upsert({
+    where: { courseId_sectionId_academicTerm: { courseId: createdCourses["SOC-8"], sectionId: section.id, academicTerm: "term_1" } },
+    update: {},
+    create: { courseId: createdCourses["SOC-8"], sectionId: section.id, teacherId: staffProfile?.id, academicTerm: "term_1" },
+  });
+
+  // Full-week timetable for 8-A term_1 (Mon–Fri, 6 periods/day)
+  const TIMES = [
+    { p: 1, start: "08:00", end: "08:45" },
+    { p: 2, start: "08:50", end: "09:35" },
+    { p: 3, start: "09:50", end: "10:35" },
+    { p: 4, start: "10:40", end: "11:25" },
+    { p: 5, start: "11:30", end: "12:15" },
+    { p: 6, start: "13:00", end: "13:45" },
   ];
+  // dayOfWeek: 0=Mon,1=Tue,2=Wed,3=Thu,4=Fri
+  const WEEK_GRID: { day: number; period: number; offeringId: string; room: string }[] = [
+    // Monday
+    { day: 0, period: 1, offeringId: mathOffering.id, room: "Room 101" },
+    { day: 0, period: 2, offeringId: sciOffering.id,  room: "Lab A" },
+    { day: 0, period: 3, offeringId: engOffering.id,  room: "Room 203" },
+    { day: 0, period: 4, offeringId: socOffering.id,  room: "Room 105" },
+    { day: 0, period: 5, offeringId: mathOffering.id, room: "Room 101" },
+    { day: 0, period: 6, offeringId: sciOffering.id,  room: "Lab A" },
+    // Tuesday
+    { day: 1, period: 1, offeringId: sciOffering.id,  room: "Lab A" },
+    { day: 1, period: 2, offeringId: mathOffering.id, room: "Room 101" },
+    { day: 1, period: 3, offeringId: socOffering.id,  room: "Room 105" },
+    { day: 1, period: 4, offeringId: engOffering.id,  room: "Room 203" },
+    { day: 1, period: 5, offeringId: sciOffering.id,  room: "Lab A" },
+    { day: 1, period: 6, offeringId: mathOffering.id, room: "Room 101" },
+    // Wednesday
+    { day: 2, period: 1, offeringId: mathOffering.id, room: "Room 101" },
+    { day: 2, period: 2, offeringId: engOffering.id,  room: "Room 203" },
+    { day: 2, period: 3, offeringId: sciOffering.id,  room: "Lab A" },
+    { day: 2, period: 4, offeringId: mathOffering.id, room: "Room 101" },
+    { day: 2, period: 5, offeringId: socOffering.id,  room: "Room 105" },
+    { day: 2, period: 6, offeringId: engOffering.id,  room: "Room 203" },
+    // Thursday
+    { day: 3, period: 1, offeringId: sciOffering.id,  room: "Lab A" },
+    { day: 3, period: 2, offeringId: socOffering.id,  room: "Room 105" },
+    { day: 3, period: 3, offeringId: mathOffering.id, room: "Room 101" },
+    { day: 3, period: 4, offeringId: engOffering.id,  room: "Room 203" },
+    { day: 3, period: 5, offeringId: mathOffering.id, room: "Room 101" },
+    { day: 3, period: 6, offeringId: sciOffering.id,  room: "Lab A" },
+    // Friday
+    { day: 4, period: 1, offeringId: mathOffering.id, room: "Room 101" },
+    { day: 4, period: 2, offeringId: sciOffering.id,  room: "Lab A" },
+    { day: 4, period: 3, offeringId: socOffering.id,  room: "Room 105" },
+    { day: 4, period: 4, offeringId: engOffering.id,  room: "Room 203" },
+    { day: 4, period: 5, offeringId: sciOffering.id,  room: "Lab A" },
+    { day: 4, period: 6, offeringId: mathOffering.id, room: "Room 101" },
+  ];
+  const slots = WEEK_GRID.map((g) => {
+    const t = TIMES.find((x) => x.p === g.period)!;
+    return { dayOfWeek: g.day, periodNumber: g.period, startTime: t.start, endTime: t.end, courseOfferingId: g.offeringId, roomLabel: g.room };
+  });
 
   for (const slot of slots) {
     await prisma.timetableSlot.upsert({
@@ -193,36 +246,40 @@ async function main() {
     });
   }
 
-  // Demo attendance session (today, period 1, already submitted)
+  // 30-day attendance history (~90% attendance rate)
   const studentProfileRecord = await prisma.studentProfile.findFirst({ where: { userId: studentUser.id } });
-  const demoSession = await prisma.attendanceSession.upsert({
-    where: { sectionId_sessionDate_periodNumber: { sectionId: section.id, sessionDate: new Date("2026-06-19T00:00:00Z"), periodNumber: 1 } },
-    update: {},
-    create: {
-      schoolId: school.id,
-      sectionId: section.id,
-      teacherId: staffProfile?.id,
-      sessionDate: new Date("2026-06-19T00:00:00Z"),
-      periodNumber: 1,
-      submittedAt: new Date("2026-06-19T08:45:00Z"),
-    },
-  });
-
-  if (studentProfileRecord) {
-    await prisma.attendanceRecord.upsert({
-      where: { attendanceSessionId_studentProfileId: { attendanceSessionId: demoSession.id, studentProfileId: studentProfileRecord.id } },
+  // Generate school days for last 30 calendar days (Mon–Fri only)
+  const attendanceDays: Date[] = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date("2026-06-20T00:00:00Z");
+    d.setUTCDate(d.getUTCDate() - i);
+    const dow = d.getUTCDay(); // 0=Sun, 6=Sat
+    if (dow !== 0 && dow !== 6) attendanceDays.push(d);
+  }
+  // Mark ~10% absent (every 10th day)
+  for (let idx = 0; idx < attendanceDays.length; idx++) {
+    const day = attendanceDays[idx];
+    const isAbsent = idx % 10 === 9;
+    const session = await prisma.attendanceSession.upsert({
+      where: { sectionId_sessionDate_periodNumber: { sectionId: section.id, sessionDate: day, periodNumber: 1 } },
       update: {},
       create: {
-        attendanceSessionId: demoSession.id,
-        studentProfileId: studentProfileRecord.id,
-        status: "present",
+        schoolId: school.id, sectionId: section.id, teacherId: staffProfile?.id,
+        sessionDate: day, periodNumber: 1, submittedAt: new Date(day.getTime() + 45 * 60000),
       },
     });
+    if (studentProfileRecord) {
+      await prisma.attendanceRecord.upsert({
+        where: { attendanceSessionId_studentProfileId: { attendanceSessionId: session.id, studentProfileId: studentProfileRecord.id } },
+        update: {},
+        create: { attendanceSessionId: session.id, studentProfileId: studentProfileRecord.id, status: isAbsent ? "absent" : "present" },
+      });
+    }
   }
 
   // ─── Phase 3: Assignments, Exams, Grade Scales ──────────────────────────────
 
-  // Assignment for Math offering
+  // Assignments — mix of graded, submitted-pending-grade, and due-upcoming
   const mathAssignment = await prisma.assignment.upsert({
     where: { id: "seed-assignment-math-1" },
     update: {},
@@ -253,6 +310,49 @@ async function main() {
       },
     });
   }
+
+  // Assignment 2 — Science, submitted, awaiting grade
+  const sciAssignment = await prisma.assignment.upsert({
+    where: { id: "seed-assignment-sci-1" },
+    update: {},
+    create: {
+      id: "seed-assignment-sci-1",
+      courseOfferingId: sciOffering.id,
+      title: "Lab Report – Refraction Experiment",
+      instructions: "Write a full lab report for the refraction of light experiment conducted on June 12. Include aim, materials, procedure, observations and conclusion.",
+      dueDate: new Date("2026-06-28T00:00:00Z"),
+      maxScore: 30,
+      isPublished: true,
+    },
+  });
+  if (studentProfileRecord) {
+    await prisma.submission.upsert({
+      where: { assignmentId_studentProfileId: { assignmentId: sciAssignment.id, studentProfileId: studentProfileRecord.id } },
+      update: {},
+      create: {
+        assignmentId: sciAssignment.id,
+        studentProfileId: studentProfileRecord.id,
+        fileUrl: "https://storage.example.com/submissions/ava-refraction-lab.pdf",
+        submittedAt: new Date("2026-06-25T10:00:00Z"),
+        status: "submitted",
+      },
+    });
+  }
+
+  // Assignment 3 — English, pending (not yet submitted)
+  await prisma.assignment.upsert({
+    where: { id: "seed-assignment-eng-1" },
+    update: {},
+    create: {
+      id: "seed-assignment-eng-1",
+      courseOfferingId: engOffering.id,
+      title: "Essay – My Favourite Book",
+      instructions: "Write a 500-word essay about your favourite book. Explain why you love it and what you learnt from it.",
+      dueDate: new Date("2026-07-05T00:00:00Z"),
+      maxScore: 25,
+      isPublished: true,
+    },
+  });
 
   // Exam: Mid-Term Mathematics
   const midtermExam = await prisma.exam.upsert({
@@ -287,6 +387,25 @@ async function main() {
       },
     });
   }
+
+  // Exam 2 — Science Mid-Term (upcoming, not yet published)
+  const sciExam = await prisma.exam.upsert({
+    where: { id: "seed-exam-sci-midterm" },
+    update: {},
+    create: {
+      id: "seed-exam-sci-midterm",
+      courseOfferingId: sciOffering.id,
+      academicYearId: ay.id,
+      title: "Mid-Term Science",
+      examType: "midterm",
+      term: "term_1",
+      weight: 1.0,
+      maxMarks: 100,
+      examDate: new Date("2026-08-22T09:00:00Z"),
+      isPublished: false,
+    },
+  });
+  void sciExam; // referenced in transport/online class section later
 
   // Grade scale for Grade 8
   const gradeScales = [
@@ -476,6 +595,99 @@ async function main() {
       });
     }
   }
+
+  // ─── Phase 9: Transport Routes ─────────────────────────────────────────────
+  const route1 = await prisma.transportRoute.upsert({
+    where: { id: "seed-route-1" },
+    update: {},
+    create: {
+      id: "seed-route-1",
+      schoolId: school.id,
+      routeName: "Route A – North Zone",
+      vehicleNumber: "MH-12-AB-1234",
+      driverName: "Ramesh Yadav",
+      driverPhone: "+91-98765-43210",
+      capacity: 42,
+      status: "on_route",
+    },
+  });
+  await prisma.transportRoute.upsert({
+    where: { id: "seed-route-2" },
+    update: {},
+    create: {
+      id: "seed-route-2",
+      schoolId: school.id,
+      routeName: "Route B – South Zone",
+      vehicleNumber: "MH-12-CD-5678",
+      driverName: "Suresh Patil",
+      driverPhone: "+91-87654-32109",
+      capacity: 38,
+      status: "arrived",
+    },
+  });
+
+  // Assign Ava Patel to Route A
+  if (studentProfileRecord) {
+    await prisma.transportAssignment.upsert({
+      where: { routeId_studentProfileId: { routeId: route1.id, studentProfileId: studentProfileRecord.id } },
+      update: {},
+      create: {
+        routeId: route1.id,
+        studentProfileId: studentProfileRecord.id,
+        pickupLocation: "Sunrise Apartments, Sector 12",
+        dropLocation: "SPIRA Demo School – Main Gate",
+        pickupEta: "07:30",
+        dropEta: "16:00",
+      },
+    });
+  }
+
+  // ─── Phase 9: Online Classes ───────────────────────────────────────────────
+  await prisma.onlineClass.upsert({
+    where: { id: "seed-oc-math-1" },
+    update: {},
+    create: {
+      id: "seed-oc-math-1",
+      schoolId: school.id,
+      courseOfferingId: mathOffering.id,
+      hostId: staffProfile!.id,
+      title: "Algebra Revision – Quadratic Equations",
+      scheduledAt: new Date("2026-06-21T10:00:00Z"),
+      durationMins: 60,
+      meetingLink: "https://meet.google.com/abc-defg-hij",
+      status: "upcoming",
+    },
+  });
+  await prisma.onlineClass.upsert({
+    where: { id: "seed-oc-sci-1" },
+    update: {},
+    create: {
+      id: "seed-oc-sci-1",
+      schoolId: school.id,
+      courseOfferingId: sciOffering.id,
+      hostId: staffProfile!.id,
+      title: "Light & Optics – Live Demo",
+      scheduledAt: new Date("2026-06-19T11:00:00Z"),
+      durationMins: 45,
+      meetingLink: "https://meet.google.com/xyz-uvwx-yz1",
+      status: "completed",
+    },
+  });
+  await prisma.onlineClass.upsert({
+    where: { id: "seed-oc-eng-1" },
+    update: {},
+    create: {
+      id: "seed-oc-eng-1",
+      schoolId: school.id,
+      courseOfferingId: engOffering.id,
+      hostId: staffProfile!.id,
+      title: "Essay Writing Workshop",
+      scheduledAt: new Date("2026-06-23T09:00:00Z"),
+      durationMins: 90,
+      meetingLink: "https://meet.google.com/eng-writ-sho",
+      status: "upcoming",
+    },
+  });
 
   console.log("Seed complete. Demo accounts (school code: 0000 / password: Password@123):");
   console.log("  admin@mail.com");

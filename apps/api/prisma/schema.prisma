@@ -34,6 +34,8 @@ model School {
   documents       Document[]
   analyticsSnaps  AnalyticsSnapshot[]
   auditLogs       AuditLog[]
+  transportRoutes TransportRoute[]
+  onlineClasses   OnlineClass[]
 
   @@map("school")
 }
@@ -186,6 +188,7 @@ model StudentProfile {
   examResults        ExamResult[]
   feeInvoices        FeeInvoice[]
   parentLinks        ParentStudentLink[]
+  transportAssignment TransportAssignment[]
 
   @@unique([schoolId, admissionNo])
   @@map("student_profile")
@@ -208,6 +211,7 @@ model StaffProfile {
   user           User             @relation(fields: [userId], references: [id])
   courseOfferings CourseOffering[]
   attendanceSessions AttendanceSession[]
+  hostedOnlineClasses OnlineClass[]
 
   @@unique([schoolId, employeeNo])
   @@map("staff_profile")
@@ -275,8 +279,9 @@ model CourseOffering {
   course      Course         @relation(fields: [courseId], references: [id])
   section     Section        @relation(fields: [sectionId], references: [id])
   teacher     StaffProfile?  @relation(fields: [teacherId], references: [id])
-  assignments Assignment[]
-  exams       Exam[]
+  assignments  Assignment[]
+  exams        Exam[]
+  onlineClasses OnlineClass[]
 
   @@unique([courseId, sectionId, academicTerm])
   @@map("course_offering")
@@ -543,6 +548,67 @@ model Document {
   school School @relation(fields: [schoolId], references: [id])
 
   @@map("document")
+}
+
+// ─── Transport ────────────────────────────────────────────────────────────────
+
+model TransportRoute {
+  id            String   @id @default(cuid())
+  schoolId      String
+  routeName     String
+  vehicleNumber String
+  driverName    String
+  driverPhone   String?
+  capacity      Int      @default(40)
+  status        String   @default("on_route")
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  school       School              @relation(fields: [schoolId], references: [id])
+  assignments  TransportAssignment[]
+
+  @@map("transport_route")
+}
+
+model TransportAssignment {
+  id               String   @id @default(cuid())
+  routeId          String
+  studentProfileId String
+  pickupLocation   String
+  dropLocation     String
+  pickupEta        String?
+  dropEta          String?
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+
+  route          TransportRoute @relation(fields: [routeId], references: [id])
+  studentProfile StudentProfile @relation(fields: [studentProfileId], references: [id])
+
+  @@unique([routeId, studentProfileId])
+  @@map("transport_assignment")
+}
+
+// ─── Online Classes ───────────────────────────────────────────────────────────
+
+model OnlineClass {
+  id               String   @id @default(cuid())
+  schoolId         String
+  courseOfferingId String
+  hostId           String
+  title            String
+  scheduledAt      DateTime
+  durationMins     Int      @default(60)
+  meetingLink      String
+  status           String   @default("upcoming")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  school         School         @relation(fields: [schoolId], references: [id])
+  courseOffering CourseOffering @relation(fields: [courseOfferingId], references: [id])
+  host           StaffProfile   @relation(fields: [hostId], references: [id])
+
+  @@map("online_class")
 }
 
 // ─── Analytics & AI ───────────────────────────────────────────────────────────

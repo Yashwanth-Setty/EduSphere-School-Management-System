@@ -28,6 +28,31 @@ export class TimetableService {
     });
   }
 
+  async getSlotsForStudent(schoolId: string, userId: string) {
+    const student = await this.prisma.studentProfile.findFirst({ where: { userId, schoolId } });
+    if (!student?.sectionId) return { data: [] };
+    const slots = await this.prisma.timetableSlot.findMany({
+      where: { sectionId: student.sectionId, term: "term_1" },
+      include: {
+        section: true,
+        // courseOffering via courseOfferingId
+      },
+      orderBy: [{ dayOfWeek: "asc" }, { periodNumber: "asc" }],
+    });
+    // Enrich with courseOffering data
+    const enriched = await Promise.all(
+      slots.map(async (s) => {
+        if (!s.courseOfferingId) return { ...s, courseOffering: null };
+        const co = await this.prisma.courseOffering.findUnique({
+          where: { id: s.courseOfferingId },
+          include: { course: true, section: true },
+        });
+        return { ...s, courseOffering: co };
+      }),
+    );
+    return { data: enriched };
+  }
+
   async createSlot(dto: CreateSlotDto, schoolId: string) {
     const section = await this.prisma.section.findUnique({ where: { id: dto.sectionId } });
     if (!section || section.schoolId !== schoolId) throw new ForbiddenException();

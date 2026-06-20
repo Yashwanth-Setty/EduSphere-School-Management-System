@@ -86,6 +86,24 @@ export const NAV_ITEMS: NavItem[] = [
     icon: "🤖",
     roles: [Role.ADMIN, Role.PRINCIPAL, Role.COUNSELOR],
   },
+  {
+    label: "Transport",
+    href: "/transport",
+    icon: "🚌",
+    roles: [Role.ADMIN, Role.PRINCIPAL, Role.STUDENT, Role.PARENT],
+  },
+  {
+    label: "Online Classes",
+    href: "/online-classes",
+    icon: "🎥",
+    roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT],
+  },
+  {
+    label: "AI Assistant",
+    href: "/assistant",
+    icon: "💬",
+    roles: [Role.STUDENT],
+  },
 ];
 
 /** Bottom tab definitions per role (3 tabs + More) */
@@ -93,8 +111,8 @@ export const ROLE_BOTTOM_TABS: Record<string, string[]> = {
   [Role.ADMIN]:      ["/dashboard", "/students", "/attendance"],
   [Role.PRINCIPAL]:  ["/dashboard", "/students", "/attendance"],
   [Role.TEACHER]:    ["/dashboard", "/attendance", "/assignments"],
-  [Role.STUDENT]:    ["/dashboard", "/assignments", "/exams"],
-  [Role.PARENT]:     ["/dashboard", "/fees", "/documents"],
+  [Role.STUDENT]:    ["/dashboard", "/online-classes", "/assistant"],
+  [Role.PARENT]:     ["/dashboard", "/fees", "/transport"],
   [Role.ACCOUNTANT]: ["/dashboard", "/fees", "/analytics"],
   [Role.COUNSELOR]:  ["/dashboard", "/documents", "/ai"],
 };

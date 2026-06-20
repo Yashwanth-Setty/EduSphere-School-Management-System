@@ -59,6 +59,11 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
     (url: string) => apiClient.get<{ total: number }>(url),
   );
 
+  const { data: onlineClasses } = useSWR<{ data: Array<{ id: string; title: string; scheduledAt: string; status: string; courseOffering: { course: { code: string } } }> }>(
+    ready ? "/online-classes?page=1&pageSize=5" : null,
+    (url: string) => apiClient.get<{ data: Array<{ id: string; title: string; scheduledAt: string; status: string; courseOffering: { course: { code: string } } }> }>(url),
+  );
+
   const todaySlots = (slots?.data ?? []).filter((s) => s.dayOfWeek === todayDow)
     .sort((a, b) => a.periodNumber - b.periodNumber);
 
@@ -74,24 +79,26 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
       </div>
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg border border-border p-4">
-          <p className="text-xs text-text-500 mb-1">Today&apos;s Classes</p>
-          <p className="text-2xl font-bold text-text-900">{todaySlots.length}</p>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        <div className="bg-gradient-to-br from-spira-600 to-spira-800 rounded-xl p-4 text-white shadow-sm">
+          <p className="text-spira-200 text-xs font-medium uppercase tracking-wide mb-1">Today&apos;s Classes</p>
+          <p className="text-3xl font-bold">{todaySlots.length}</p>
+          <p className="text-spira-200 text-xs mt-1">scheduled</p>
         </div>
-        <div className="bg-white rounded-lg border border-border p-4">
-          <p className="text-xs text-text-500 mb-1">Attendance Pending</p>
-          <p className={`text-2xl font-bold ${pendingSessions.length > 0 ? "text-warning" : "text-success"}`}>
-            {pendingSessions.length}
-          </p>
+        <div className={`rounded-xl p-4 text-white shadow-sm ${pendingSessions.length > 0 ? "bg-gradient-to-br from-orange-500 to-orange-700" : "bg-gradient-to-br from-emerald-500 to-emerald-700"}`}>
+          <p className="text-white/80 text-xs font-medium uppercase tracking-wide mb-1">Attendance Pending</p>
+          <p className="text-3xl font-bold">{pendingSessions.length}</p>
+          <p className="text-white/70 text-xs mt-1">{pendingSessions.length > 0 ? "sessions" : "all done"}</p>
         </div>
-        <div className="bg-white rounded-lg border border-border p-4">
-          <p className="text-xs text-text-500 mb-1">Total Assignments</p>
-          <p className="text-2xl font-bold text-text-900">{assignments?.total ?? "—"}</p>
+        <div className="bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl p-4 text-white shadow-sm">
+          <p className="text-blue-100 text-xs font-medium uppercase tracking-wide mb-1">Assignments</p>
+          <p className="text-3xl font-bold">{assignments?.total ?? "—"}</p>
+          <p className="text-blue-100 text-xs mt-1">total</p>
         </div>
-        <div className="bg-white rounded-lg border border-border p-4">
-          <p className="text-xs text-text-500 mb-1">Total Exams</p>
-          <p className="text-2xl font-bold text-text-900">{exams?.total ?? "—"}</p>
+        <div className="bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl p-4 text-white shadow-sm">
+          <p className="text-purple-100 text-xs font-medium uppercase tracking-wide mb-1">Exams</p>
+          <p className="text-3xl font-bold">{exams?.total ?? "—"}</p>
+          <p className="text-purple-100 text-xs mt-1">total</p>
         </div>
       </div>
 
@@ -132,26 +139,53 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
           )}
         </div>
 
-        {/* Quick actions */}
-        <div className="bg-white rounded-lg border border-border p-5">
-          <h2 className="text-sm font-semibold text-text-900 mb-4">Quick Actions</h2>
-          <div className="space-y-1">
-            {[
-              { label: "Mark Attendance", icon: "📋", href: "/attendance/new" },
-              { label: "Create Assignment", icon: "📝", href: "/assignments/new" },
-              { label: "Enter Exam Results", icon: "📊", href: "/exams/new" },
-              { label: "View Timetable", icon: "📅", href: "/timetable" },
-              { label: "Announcements", icon: "📢", href: "/announcements" },
-            ].map((a) => (
-              <Link
-                key={a.label}
-                href={a.href}
-                className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-text-700 hover:bg-surface-50 rounded-md transition-colors"
-              >
-                <span className="text-base">{a.icon}</span>
-                {a.label}
+        {/* Right column */}
+        <div className="space-y-5">
+          {/* Online classes to host */}
+          {(onlineClasses?.data ?? []).filter((c) => c.status !== "completed").length > 0 && (
+            <div className="bg-white rounded-lg border border-border p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm font-semibold text-text-900">🎥 Online Classes to Host</h2>
+                <Link href="/online-classes" className="text-xs text-spira-700 hover:underline">View all →</Link>
+              </div>
+              <div className="space-y-2">
+                {(onlineClasses?.data ?? []).filter((c) => c.status !== "completed").map((oc) => (
+                  <Link key={oc.id} href={`/online-classes/${oc.id}`} className="flex items-center justify-between p-2.5 rounded-md bg-surface-50 border border-surface-100 hover:border-spira-300 transition-colors">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-text-900 truncate">{oc.title}</p>
+                      <p className="text-xs text-text-500">{new Date(oc.scheduledAt).toLocaleString("en-IN", { timeZone: "UTC", dateStyle: "short", timeStyle: "short" })}</p>
+                    </div>
+                    <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 shrink-0 capitalize">{oc.status}</span>
+                  </Link>
+                ))}
+              </div>
+              <Link href="/online-classes/new" className="mt-3 block text-center text-xs text-spira-700 border border-spira-300 rounded-md py-2 hover:bg-spira-50 transition-colors">
+                + Schedule New Class
               </Link>
-            ))}
+            </div>
+          )}
+
+          {/* Quick actions */}
+          <div className="bg-white rounded-lg border border-border p-5">
+            <h2 className="text-sm font-semibold text-text-900 mb-4">Quick Actions</h2>
+            <div className="space-y-1">
+              {[
+                { label: "Mark Attendance", icon: "📋", href: "/attendance/new" },
+                { label: "Create Assignment", icon: "📝", href: "/assignments/new" },
+                { label: "Enter Exam Results", icon: "📊", href: "/exams/new" },
+                { label: "Online Classes", icon: "🎥", href: "/online-classes" },
+                { label: "View Timetable", icon: "📅", href: "/timetable" },
+              ].map((a) => (
+                <Link
+                  key={a.label}
+                  href={a.href}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-text-700 hover:bg-surface-50 rounded-md transition-colors"
+                >
+                  <span className="text-base">{a.icon}</span>
+                  {a.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>

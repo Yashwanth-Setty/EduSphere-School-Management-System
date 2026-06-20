@@ -7,6 +7,24 @@ import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
 import { AuthUser } from "@spira/types";
 
+interface TransportAssignment {
+  pickupLocation: string;
+  pickupEta: string | null;
+  route: { routeName: string; vehicleNumber: string; status: string; driverName: string };
+}
+
+interface OnlineClass {
+  id: string;
+  title: string;
+  scheduledAt: string;
+  status: string;
+  courseOffering: { course: { name: string } };
+}
+
+interface AttendanceRecord {
+  status: string;
+}
+
 interface TimetableSlot {
   id: string;
   dayOfWeek: number;
@@ -80,10 +98,29 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
     (url: string) => apiClient.get<{ data: Invoice[]; total: number }>(url),
   );
 
+  const { data: myRoute } = useSWR<TransportAssignment | null>(
+    ready ? "/transport/my-route" : null,
+    (url: string) => apiClient.get<TransportAssignment | null>(url),
+  );
+
+  const { data: onlineClasses } = useSWR<{ data: OnlineClass[]; total: number }>(
+    ready ? "/online-classes?page=1&pageSize=5" : null,
+    (url: string) => apiClient.get<{ data: OnlineClass[]; total: number }>(url),
+  );
+
+  const { data: attendanceRecords } = useSWR<{ data: AttendanceRecord[] }>(
+    ready ? "/attendance/my-records?page=1&pageSize=30" : null,
+    (url: string) => apiClient.get<{ data: AttendanceRecord[] }>(url),
+  );
+
   const todaySlots = (slots?.data ?? []).filter((s) => s.dayOfWeek === todayDow)
     .sort((a, b) => a.periodNumber - b.periodNumber);
 
   const pendingInvoices = (invoices?.data ?? []).filter((i) => i.status !== "paid");
+  const nextOnlineClass = (onlineClasses?.data ?? []).find((c) => c.status === "upcoming" || c.status === "live");
+  const allAttendance = attendanceRecords?.data ?? [];
+  const presentCount = allAttendance.filter((r) => r.status === "present").length;
+  const attendancePct = allAttendance.length > 0 ? Math.round((presentCount / allAttendance.length) * 100) : null;
 
   return (
     <div className="p-4 md:p-6 space-y-5 md:space-y-6">
@@ -94,25 +131,27 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
         </p>
       </div>
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-lg border border-border p-4">
-          <p className="text-xs text-text-500 mb-1">Today&apos;s Classes</p>
-          <p className="text-2xl font-bold text-text-900">{todaySlots.length}</p>
+      {/* KPI cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        <div className="bg-gradient-to-br from-spira-600 to-spira-800 rounded-xl p-4 text-white shadow-sm">
+          <p className="text-spira-200 text-xs font-medium uppercase tracking-wide mb-1">Today&apos;s Classes</p>
+          <p className="text-3xl font-bold">{todaySlots.length}</p>
+          <p className="text-spira-200 text-xs mt-1">periods scheduled</p>
         </div>
-        <div className="bg-white rounded-lg border border-border p-4">
-          <p className="text-xs text-text-500 mb-1">Assignments</p>
-          <p className="text-2xl font-bold text-text-900">{assignments?.total ?? "—"}</p>
+        <div className="bg-gradient-to-br from-green-500 to-green-700 rounded-xl p-4 text-white shadow-sm">
+          <p className="text-green-100 text-xs font-medium uppercase tracking-wide mb-1">Attendance</p>
+          <p className="text-3xl font-bold">{attendancePct !== null ? `${attendancePct}%` : "—"}</p>
+          <p className="text-green-100 text-xs mt-1">last 30 days</p>
         </div>
-        <div className="bg-white rounded-lg border border-border p-4">
-          <p className="text-xs text-text-500 mb-1">Exams</p>
-          <p className="text-2xl font-bold text-text-900">{exams?.total ?? "—"}</p>
+        <div className="bg-gradient-to-br from-orange-500 to-orange-700 rounded-xl p-4 text-white shadow-sm">
+          <p className="text-orange-100 text-xs font-medium uppercase tracking-wide mb-1">Assignments</p>
+          <p className="text-3xl font-bold">{assignments?.total ?? "—"}</p>
+          <p className="text-orange-100 text-xs mt-1">total</p>
         </div>
-        <div className="bg-white rounded-lg border border-border p-4">
-          <p className="text-xs text-text-500 mb-1">Pending Fees</p>
-          <p className={`text-2xl font-bold ${pendingInvoices.length > 0 ? "text-warning" : "text-success"}`}>
-            {pendingInvoices.length}
-          </p>
+        <div className={`rounded-xl p-4 text-white shadow-sm ${pendingInvoices.length > 0 ? "bg-gradient-to-br from-red-500 to-red-700" : "bg-gradient-to-br from-emerald-500 to-emerald-700"}`}>
+          <p className="text-white/80 text-xs font-medium uppercase tracking-wide mb-1">Pending Fees</p>
+          <p className="text-3xl font-bold">{pendingInvoices.length}</p>
+          <p className="text-white/70 text-xs mt-1">{pendingInvoices.length > 0 ? "unpaid invoices" : "all clear"}</p>
         </div>
       </div>
 
@@ -192,6 +231,48 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
 
         {/* Right column */}
         <div className="space-y-5">
+          {/* AI Assistant shortcut */}
+          <Link href="/assistant" className="block bg-gradient-to-br from-violet-500 to-violet-700 rounded-xl p-4 text-white shadow-sm hover:shadow-md transition-all">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">💬</span>
+              <div>
+                <p className="font-semibold text-sm">AI Study Assistant</p>
+                <p className="text-violet-200 text-xs mt-0.5">Ask about assignments, fees & exams</p>
+              </div>
+            </div>
+          </Link>
+
+          {/* Bus status */}
+          {myRoute && (
+            <Link href="/transport" className="block bg-white rounded-xl border border-border p-4 hover:border-spira-400 transition-all">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm font-semibold text-text-900">🚌 My Bus</p>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                  myRoute.route.status === "on_route" ? "bg-blue-100 text-blue-700" :
+                  myRoute.route.status === "arrived" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                }`}>
+                  {myRoute.route.status === "on_route" ? "On Route" : myRoute.route.status === "arrived" ? "Arrived" : myRoute.route.status}
+                </span>
+              </div>
+              <p className="text-xs text-text-700">{myRoute.route.routeName}</p>
+              <p className="text-xs text-text-400 mt-0.5">{myRoute.pickupLocation} {myRoute.pickupEta ? `· ETA ${myRoute.pickupEta}` : ""}</p>
+            </Link>
+          )}
+
+          {/* Next online class */}
+          {nextOnlineClass && (
+            <Link href={`/online-classes/${nextOnlineClass.id}`} className="block bg-white rounded-xl border border-border p-4 hover:border-spira-400 transition-all">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm font-semibold text-text-900">🎥 Next Online Class</p>
+                <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 capitalize">{nextOnlineClass.status}</span>
+              </div>
+              <p className="text-xs text-text-700 truncate">{nextOnlineClass.title}</p>
+              <p className="text-xs text-text-400 mt-0.5">
+                {new Date(nextOnlineClass.scheduledAt).toLocaleString("en-IN", { timeZone: "UTC", dateStyle: "medium", timeStyle: "short" })}
+              </p>
+            </Link>
+          )}
+
           {/* Quick actions */}
           <div className="bg-white rounded-lg border border-border p-5">
             <h2 className="text-sm font-semibold text-text-900 mb-4">Quick Actions</h2>
@@ -205,11 +286,11 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
               <Link href="/fees" className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-text-700 hover:bg-surface-50 rounded-md transition-colors">
                 <span>💰</span> My Fee Invoices
               </Link>
+              <Link href="/online-classes" className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-text-700 hover:bg-surface-50 rounded-md transition-colors">
+                <span>🎥</span> Online Classes
+              </Link>
               <Link href="/documents" className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-text-700 hover:bg-surface-50 rounded-md transition-colors">
                 <span>📄</span> Documents
-              </Link>
-              <Link href="/announcements" className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-text-700 hover:bg-surface-50 rounded-md transition-colors">
-                <span>📢</span> Announcements
               </Link>
             </div>
           </div>
