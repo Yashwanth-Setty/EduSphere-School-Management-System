@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -47,7 +47,7 @@ export default function NewAttendanceSessionPage() {
   };
 
   return (
-    <div className="p-6 max-w-lg">
+    <div className="p-4 md:p-6 max-w-lg">
       <div className="mb-6">
         <Link href="/attendance" className="text-sm text-spira-700 hover:underline">&larr; Back to attendance</Link>
         <h1 className="text-2xl font-semibold text-text-900 mt-2">Open attendance session</h1>
@@ -67,7 +67,7 @@ export default function NewAttendanceSessionPage() {
             onChange={(e) => setForm((f) => ({ ...f, sectionId: e.target.value }))}
             className="w-full px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-spira-700 bg-white"
           >
-            <option value="">— Choose section —</option>
+            <option value="">â€” Choose section â€”</option>
             {(sections ?? []).map((s) => (
               <option key={s.id} value={s.id}>{s.name}</option>
             ))}
@@ -106,7 +106,7 @@ export default function NewAttendanceSessionPage() {
             disabled={saving}
             className="px-5 py-2 text-sm font-medium text-white bg-spira-700 rounded-md hover:bg-spira-800 transition-colors disabled:opacity-60"
           >
-            {saving ? "Opening…" : "Open session"}
+            {saving ? "Openingâ€¦" : "Open session"}
           </button>
           <Link href="/attendance" className="text-sm text-text-500 hover:text-text-700">Cancel</Link>
         </div>
@@ -114,3 +114,4 @@ export default function NewAttendanceSessionPage() {
     </div>
   );
 }
+

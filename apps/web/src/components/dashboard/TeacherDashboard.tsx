@@ -65,9 +65,9 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
   const pendingSessions = (sessions?.data ?? []).filter((s) => !s.submittedAt);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-5 md:space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-text-900">Teacher Dashboard</h1>
+        <h1 className="text-xl md:text-2xl font-semibold text-text-900">Teacher Dashboard</h1>
         <p className="text-text-500 text-sm mt-1">
           Welcome back, <span className="font-medium text-text-700">{user.displayName}</span> · {DAY_NAMES[todayDow]}
         </p>

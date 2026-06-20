@@ -3,6 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { apiClient } from "@/lib/api-client";
+import { useAuth } from "@/hooks/useAuth";
+import { Role } from "@spira/types";
+import { canCreate } from "@/lib/permissions";
 
 interface RunResult {
   processed: number;
@@ -27,12 +30,16 @@ const JOBS: { key: JobKey; label: string; desc: string; icon: string }[] = [
 ];
 
 export default function AiInsightsPage() {
+  const { user } = useAuth();
   const [running, setRunning] = useState<JobKey | null>(null);
   const [results, setResults] = useState<Record<JobKey, RunResult | null>>({
     "attendance-risk": null,
     "performance-summary": null,
   });
   const [error, setError] = useState<string | null>(null);
+
+  const roles = (user?.roles ?? []) as Role[];
+  const canRunJobs = canCreate(roles, "ai");
 
   async function runJob(key: JobKey) {
     setRunning(key);
@@ -48,9 +55,9 @@ export default function AiInsightsPage() {
   }
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-4 md:p-6 space-y-6 md:space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold text-text-900">AI Insights</h1>
+        <h1 className="text-xl md:text-2xl font-semibold text-text-900">AI Insights</h1>
         <p className="text-text-500 text-sm mt-1">
           Rule-based scoring and recommendation generation — no external model calls required.
         </p>
@@ -62,7 +69,8 @@ export default function AiInsightsPage() {
         </div>
       )}
 
-      {/* Job cards */}
+      {/* Job cards — only shown to roles that can trigger jobs */}
+      {canRunJobs && (
       <section>
         <h2 className="text-sm font-semibold text-text-700 uppercase tracking-wide mb-3">Run Analysis</h2>
         <div className="grid md:grid-cols-2 gap-4">
@@ -97,6 +105,7 @@ export default function AiInsightsPage() {
           })}
         </div>
       </section>
+      )}
 
       {/* Navigation */}
       <section>

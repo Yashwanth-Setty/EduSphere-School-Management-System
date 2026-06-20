@@ -35,7 +35,7 @@ export default function CourseDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="p-6 space-y-4">
+      <div className="p-4 md:p-6 space-y-4">
         <div className="h-6 bg-surface-100 rounded animate-pulse w-48" />
         <div className="h-32 bg-surface-100 rounded animate-pulse" />
       </div>
@@ -45,7 +45,7 @@ export default function CourseDetailPage() {
   if (!course) return null;
 
   return (
-    <div className="p-6 space-y-6 max-w-3xl">
+    <div className="p-4 md:p-6 space-y-5 md:space-y-6 max-w-3xl">
       <div>
         <Link href="/courses" className="text-sm text-spira-700 hover:underline">&larr; Back to courses</Link>
         <div className="flex items-start justify-between mt-2">

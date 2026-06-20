@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import useSWR from "swr";
@@ -77,7 +77,7 @@ export default function GradeScalesPage() {
   }, {});
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-5 md:space-y-6">
       <div>
         <h1 className="text-2xl font-semibold text-text-900">Grade Scales</h1>
         <p className="text-text-500 text-sm mt-0.5">Define grading bands per grade level</p>
@@ -96,7 +96,7 @@ export default function GradeScalesPage() {
               onChange={(e) => setForm({ ...form, gradeLevelId: e.target.value })}
               className="w-full px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-spira-700"
             >
-              <option value="">Select…</option>
+              <option value="">Selectâ€¦</option>
               {levels?.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
             </select>
           </div>
@@ -122,7 +122,7 @@ export default function GradeScalesPage() {
           </div>
           <div className="col-span-2 sm:col-span-3 flex justify-end">
             <button type="submit" disabled={saving} className="px-5 py-2 text-sm font-medium text-white bg-spira-700 rounded-md hover:bg-spira-800 disabled:opacity-50 transition-colors">
-              {saving ? "Adding…" : "Add Entry"}
+              {saving ? "Addingâ€¦" : "Add Entry"}
             </button>
           </div>
         </form>
@@ -148,9 +148,9 @@ export default function GradeScalesPage() {
               {entries.map((s) => (
                 <tr key={s.id} className="border-b border-surface-100 hover:bg-surface-50 transition-colors">
                   <td className="px-4 py-2.5 font-semibold text-text-900">{s.gradeLabel}</td>
-                  <td className="px-4 py-2.5 text-text-500">{s.minPercent}% – {s.maxPercent}%</td>
-                  <td className="px-4 py-2.5 text-text-500">{s.gradePoint ?? "—"}</td>
-                  <td className="px-4 py-2.5 text-text-500">{s.description ?? "—"}</td>
+                  <td className="px-4 py-2.5 text-text-500">{s.minPercent}% â€“ {s.maxPercent}%</td>
+                  <td className="px-4 py-2.5 text-text-500">{s.gradePoint ?? "â€”"}</td>
+                  <td className="px-4 py-2.5 text-text-500">{s.description ?? "â€”"}</td>
                   <td className="px-4 py-2.5">
                     <button onClick={() => handleDelete(s.id)} className="text-xs text-error hover:underline">Delete</button>
                   </td>
@@ -167,3 +167,4 @@ export default function GradeScalesPage() {
     </div>
   );
 }
+

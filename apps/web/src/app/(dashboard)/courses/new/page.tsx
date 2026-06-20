@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -26,7 +26,7 @@ export default function NewCoursePage() {
   };
 
   return (
-    <div className="p-6 max-w-xl">
+    <div className="p-4 md:p-6 max-w-xl">
       <div className="mb-6">
         <Link href="/courses" className="text-sm text-spira-700 hover:underline">&larr; Back to courses</Link>
         <h1 className="text-2xl font-semibold text-text-900 mt-2">New course</h1>
@@ -89,7 +89,7 @@ export default function NewCoursePage() {
             disabled={saving}
             className="px-5 py-2 text-sm font-medium text-white bg-spira-700 rounded-md hover:bg-spira-800 transition-colors disabled:opacity-60"
           >
-            {saving ? "Creating…" : "Create course"}
+            {saving ? "Creatingâ€¦" : "Create course"}
           </button>
           <Link href="/courses" className="text-sm text-text-500 hover:text-text-700">Cancel</Link>
         </div>
@@ -97,3 +97,4 @@ export default function NewCoursePage() {
     </div>
   );
 }
+

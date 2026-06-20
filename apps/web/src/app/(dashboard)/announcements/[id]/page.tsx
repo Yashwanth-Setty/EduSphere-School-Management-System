@@ -48,15 +48,15 @@ export default function AnnouncementDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="p-6 space-y-4">
+      <div className="p-4 md:p-6 space-y-4">
         {Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-5 bg-surface-100 rounded animate-pulse w-2/3" />)}
       </div>
     );
   }
-  if (!ann) return <div className="p-6 text-text-500">Announcement not found.</div>;
+  if (!ann) return <div className="p-4 md:p-6 text-text-500">Announcement not found.</div>;
 
   return (
-    <div className="p-6 max-w-2xl space-y-5">
+    <div className="p-4 md:p-6 max-w-2xl space-y-5">
       <button onClick={() => router.back()} className="text-xs text-text-400 hover:text-text-700">← Back</button>
 
       <div className="bg-white rounded-lg border border-border shadow-sm p-6 space-y-4">

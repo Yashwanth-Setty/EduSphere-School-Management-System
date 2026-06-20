@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -41,13 +41,13 @@ export default function AcademicReportPage() {
   const exportUrl = `/api/v1/analytics/academic/export${params}`;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-5 md:space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-text-900">Academic Performance</h1>
           <p className="text-text-500 text-sm mt-0.5">Exam averages by course and section</p>
         </div>
-        <Link href="/analytics" className="text-sm text-spira-700 hover:underline">← Analytics</Link>
+        <Link href="/analytics" className="text-sm text-spira-700 hover:underline">â† Analytics</Link>
       </div>
 
       {/* Filters */}
@@ -96,17 +96,17 @@ export default function AcademicReportPage() {
                   <td className="px-4 py-3 font-medium text-text-900">{r.examTitle}</td>
                   <td className="px-4 py-3 text-text-600 capitalize">{r.examType}</td>
                   <td className="px-4 py-3 text-text-600">{r.term}</td>
-                  <td className="px-4 py-3 text-text-700">{r.courseCode} — {r.courseName}</td>
+                  <td className="px-4 py-3 text-text-700">{r.courseCode} â€” {r.courseName}</td>
                   <td className="px-4 py-3 text-text-600">{r.sectionName}</td>
                   <td className="px-4 py-3 text-text-600">{r.maxMarks}</td>
                   <td className="px-4 py-3 text-text-600">{r.totalStudents}</td>
-                  <td className="px-4 py-3 text-text-700">{r.avgMarks ?? "—"}</td>
+                  <td className="px-4 py-3 text-text-700">{r.avgMarks ?? "â€”"}</td>
                   <td className="px-4 py-3">
                     {r.avgPercent != null ? (
                       <span className={`font-semibold ${r.avgPercent >= 40 ? "text-green-700" : "text-red-600"}`}>
                         {r.avgPercent}%
                       </span>
-                    ) : "—"}
+                    ) : "â€”"}
                   </td>
                 </tr>
               ))}
@@ -117,3 +117,4 @@ export default function AcademicReportPage() {
     </div>
   );
 }
+

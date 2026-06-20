@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -62,7 +62,7 @@ export default function NewInvoicePage() {
   }
 
   return (
-    <div className="p-6 max-w-xl">
+    <div className="p-4 md:p-6 max-w-xl">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-text-900">New Invoice</h1>
         <p className="text-text-500 text-sm mt-0.5">Generate a fee invoice for a student</p>
@@ -78,9 +78,9 @@ export default function NewInvoicePage() {
             onChange={(e) => setFeePlanId(e.target.value)}
             className="w-full border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-spira-500"
           >
-            <option value="">Select fee plan…</option>
+            <option value="">Select fee planâ€¦</option>
             {plans?.map((p) => (
-              <option key={p.id} value={p.id}>{p.name} — {p.currency} {p.amount.toLocaleString()}</option>
+              <option key={p.id} value={p.id}>{p.name} â€” {p.currency} {p.amount.toLocaleString()}</option>
             ))}
           </select>
         </div>
@@ -92,7 +92,7 @@ export default function NewInvoicePage() {
             onChange={(e) => setStudentProfileId(e.target.value)}
             className="w-full border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-spira-500"
           >
-            <option value="">Select student…</option>
+            <option value="">Select studentâ€¦</option>
             {studentsData?.data.map((s) => (
               <option key={s.id} value={s.id}>{s.firstName} {s.lastName} ({s.admissionNo})</option>
             ))}
@@ -131,7 +131,7 @@ export default function NewInvoicePage() {
             disabled={saving}
             className="px-5 py-2 text-sm font-medium text-white bg-spira-700 rounded-md hover:bg-spira-800 disabled:opacity-50 transition-colors"
           >
-            {saving ? "Creating…" : "Create Invoice"}
+            {saving ? "Creatingâ€¦" : "Create Invoice"}
           </button>
           <button
             type="button"
@@ -145,3 +145,4 @@ export default function NewInvoicePage() {
     </div>
   );
 }
+

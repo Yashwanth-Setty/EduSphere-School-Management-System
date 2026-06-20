@@ -40,19 +40,19 @@ export default function AnalyticsPage() {
   ];
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-4 md:p-6 space-y-6 md:space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold text-text-900">Analytics</h1>
+        <h1 className="text-xl md:text-2xl font-semibold text-text-900">Analytics</h1>
         <p className="text-text-500 text-sm mt-1">School-wide reports and performance insights</p>
       </div>
 
       {/* KPI cards */}
       <section>
         <h2 className="text-sm font-semibold text-text-700 uppercase tracking-wide mb-3">Overview</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
           {kpis.map((k) => (
-            <div key={k.label} className="bg-white rounded-lg border border-border shadow-sm p-4">
-              <p className="text-text-400 text-xs uppercase tracking-wide mb-1">{k.label}</p>
+            <div key={k.label} className="bg-white rounded-lg border border-border shadow-sm p-3 md:p-4">
+              <p className="text-text-400 text-xs uppercase tracking-wide mb-1 leading-tight">{k.label}</p>
               {isLoading
                 ? <div className="h-7 w-12 bg-surface-100 rounded animate-pulse" />
                 : <p className={`text-2xl font-bold ${k.color}`}>{k.value ?? "—"}</p>}
@@ -64,7 +64,7 @@ export default function AnalyticsPage() {
       {/* Report links */}
       <section>
         <h2 className="text-sm font-semibold text-text-700 uppercase tracking-wide mb-3">Reports</h2>
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
           {REPORT_LINKS.map((r) => (
             <Link
               key={r.href}

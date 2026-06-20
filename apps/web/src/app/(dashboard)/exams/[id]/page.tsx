@@ -90,17 +90,17 @@ export default function ExamDetailPage({ params }: { params: Promise<{ id: strin
 
   if (isLoading || !mounted) {
     return (
-      <div className="p-6 space-y-4">
+      <div className="p-4 md:p-6 space-y-4">
         <div className="h-8 bg-surface-100 rounded animate-pulse w-64" />
         <div className="h-4 bg-surface-100 rounded animate-pulse w-96" />
       </div>
     );
   }
 
-  if (!exam) return <div className="p-6 text-text-500">Exam not found.</div>;
+  if (!exam) return <div className="p-4 md:p-6 text-text-500">Exam not found.</div>;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-5 md:space-y-6">
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">

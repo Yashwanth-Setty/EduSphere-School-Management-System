@@ -51,18 +51,18 @@ export default function TimetablePage() {
   }
 
   return (
-    <div className="p-6 space-y-5">
-      <div className="flex items-center justify-between flex-wrap gap-4">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-5">
+      <div className="flex items-center justify-between flex-wrap gap-3 md:gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-text-900">Timetable</h1>
+          <h1 className="text-xl md:text-2xl font-semibold text-text-900">Timetable</h1>
           <p className="text-text-500 text-sm mt-0.5">Weekly schedule by section</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto">
           <select
             value={term}
             onChange={(e) => setTerm(e.target.value)}
             aria-label="Select term"
-            className="px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-spira-700 bg-white"
+            className="flex-1 md:flex-none px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-spira-700 bg-white"
           >
             <option value="term_1">Term 1</option>
             <option value="term_2">Term 2</option>
@@ -72,7 +72,7 @@ export default function TimetablePage() {
             value={selectedSection}
             onChange={(e) => setSelectedSection(e.target.value)}
             aria-label="Select section"
-            className="px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-spira-700 bg-white min-w-[140px]"
+            className="flex-1 md:flex-none px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-spira-700 bg-white md:min-w-[140px]"
           >
             <option value="">— Select section —</option>
             {(sections ?? []).map((s) => (

@@ -10,7 +10,15 @@
       "PowerShell($r = Invoke-WebRequest -Uri \"http://localhost:4000/api/v1/health\" -UseBasicParsing -ErrorAction SilentlyContinue; if \\($r\\) { $r.StatusCode; $r.Content } else { \"Not responding\" })",
       "Bash(pnpm typecheck *)",
       "Bash(pnpm --filter api typecheck)",
-      "Bash(pnpm --filter web typecheck)"
+      "Bash(pnpm --filter web typecheck)",
+      "Bash(pnpm --filter @spira/web typecheck)",
+      "Bash(pnpm --filter @spira/web lint)",
+      "PowerShell(Start-Sleep -Seconds 15; try { $r = Invoke-WebRequest -Uri \"http://localhost:3001/health\" -TimeoutSec 5 -UseBasicParsing; \"API: $\\($r.StatusCode\\) - $\\($r.Content\\)\" } catch { \"API not ready: $_\" })",
+      "PowerShell(netstat -ano)",
+      "mcp__Claude_in_Chrome__navigate",
+      "mcp__Claude_in_Chrome__computer",
+      "mcp__Claude_in_Chrome__javascript_tool",
+      "mcp__Claude_in_Chrome__read_page"
     ]
   }
 }

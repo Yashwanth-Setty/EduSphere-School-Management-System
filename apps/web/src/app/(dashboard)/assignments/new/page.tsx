@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -40,7 +40,7 @@ export default function NewAssignmentPage() {
   };
 
   return (
-    <div className="p-6 max-w-xl">
+    <div className="p-4 md:p-6 max-w-xl">
       <h1 className="text-2xl font-semibold text-text-900 mb-6">New Assignment</h1>
       {error && <div className="mb-4 px-4 py-3 bg-error/10 text-error rounded-md text-sm">{error}</div>}
       <form onSubmit={handleSubmit} className="space-y-4 bg-white border border-border rounded-lg p-6 shadow-sm">
@@ -112,7 +112,7 @@ export default function NewAssignmentPage() {
             disabled={saving}
             className="px-5 py-2 text-sm font-medium text-white bg-spira-700 rounded-md hover:bg-spira-800 disabled:opacity-50 transition-colors"
           >
-            {saving ? "Creating…" : "Create Assignment"}
+            {saving ? "Creatingâ€¦" : "Create Assignment"}
           </button>
           <button
             type="button"
@@ -126,3 +126,4 @@ export default function NewAssignmentPage() {
     </div>
   );
 }
+

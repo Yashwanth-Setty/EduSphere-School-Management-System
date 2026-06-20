@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -51,13 +51,13 @@ export default function AttendanceReportPage() {
   const exportUrl = `/api/v1/analytics/attendance/export?from=${from}&to=${to}`;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-5 md:space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-text-900">Attendance Report</h1>
           <p className="text-text-500 text-sm mt-0.5">Session-level attendance rates</p>
         </div>
-        <Link href="/analytics" className="text-sm text-spira-700 hover:underline">← Analytics</Link>
+        <Link href="/analytics" className="text-sm text-spira-700 hover:underline">â† Analytics</Link>
       </div>
 
       {/* Filters */}
@@ -151,3 +151,4 @@ export default function AttendanceReportPage() {
     </div>
   );
 }
+

@@ -41,10 +41,10 @@ export default function DocumentDetailPage() {
   if (isLoading) {
     return <div className="p-6 space-y-3">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-5 bg-surface-100 rounded animate-pulse w-48" />)}</div>;
   }
-  if (!doc) return <div className="p-6 text-text-500">Document not found.</div>;
+  if (!doc) return <div className="p-4 md:p-6 text-text-500">Document not found.</div>;
 
   return (
-    <div className="p-6 max-w-2xl space-y-5">
+    <div className="p-4 md:p-6 max-w-2xl space-y-5">
       <button onClick={() => router.back()} className="text-xs text-text-400 hover:text-text-700">← Back</button>
 
       <div>

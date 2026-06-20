@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -42,13 +42,13 @@ export default function FinanceDashboardPage() {
   ];
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-5 md:space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-text-900">Finance Dashboard</h1>
           <p className="text-text-500 text-sm mt-0.5">School fee collection overview</p>
         </div>
-        <Link href="/fees" className="text-sm text-spira-700 hover:underline">← All Invoices</Link>
+        <Link href="/fees" className="text-sm text-spira-700 hover:underline">â† All Invoices</Link>
       </div>
 
       {/* KPI cards */}
@@ -68,14 +68,14 @@ export default function FinanceDashboardPage() {
           <p className="text-text-400 text-xs uppercase tracking-wide mb-1">Total Collected</p>
           {isLoading
             ? <div className="h-8 w-32 bg-surface-100 rounded animate-pulse" />
-            : <p className="text-2xl font-bold text-green-700">₹ {(data?.totalCollected ?? 0).toLocaleString()}</p>
+            : <p className="text-2xl font-bold text-green-700">â‚¹ {(data?.totalCollected ?? 0).toLocaleString()}</p>
           }
         </div>
         <div className="bg-white rounded-lg border border-border shadow-sm p-5">
           <p className="text-text-400 text-xs uppercase tracking-wide mb-1">Outstanding Balance</p>
           {isLoading
             ? <div className="h-8 w-32 bg-surface-100 rounded animate-pulse" />
-            : <p className="text-2xl font-bold text-red-600">₹ {(data?.totalOutstanding ?? 0).toLocaleString()}</p>
+            : <p className="text-2xl font-bold text-red-600">â‚¹ {(data?.totalOutstanding ?? 0).toLocaleString()}</p>
           }
         </div>
       </div>
@@ -104,7 +104,7 @@ export default function FinanceDashboardPage() {
                   {data?.recentPayments.map((p) => (
                     <tr key={p.id} className="border-b border-surface-100 last:border-0 hover:bg-surface-50 transition-colors">
                       <td className="px-6 py-3 text-text-600">
-                        {p.paidAt ? new Date(p.paidAt).toLocaleDateString("en-IN", { timeZone: "UTC" }) : "—"}
+                        {p.paidAt ? new Date(p.paidAt).toLocaleDateString("en-IN", { timeZone: "UTC" }) : "â€”"}
                       </td>
                       <td className="px-6 py-3 font-medium text-text-900">
                         {p.feeInvoice.studentProfile.firstName} {p.feeInvoice.studentProfile.lastName}
@@ -123,3 +123,4 @@ export default function FinanceDashboardPage() {
     </div>
   );
 }
+

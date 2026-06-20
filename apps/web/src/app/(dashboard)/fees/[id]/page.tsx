@@ -82,7 +82,7 @@ export default function InvoiceDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="p-6 space-y-4">
+      <div className="p-4 md:p-6 space-y-4">
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="h-6 bg-surface-100 rounded animate-pulse w-64" />
         ))}
@@ -90,13 +90,13 @@ export default function InvoiceDetailPage() {
     );
   }
 
-  if (!inv) return <div className="p-6 text-text-500">Invoice not found.</div>;
+  if (!inv) return <div className="p-4 md:p-6 text-text-500">Invoice not found.</div>;
 
   const balance = inv.amountDue - inv.amountPaid;
   const isOverdue = inv.status !== "paid" && new Date(inv.dueDate) < new Date();
 
   return (
-    <div className="p-6 space-y-6 max-w-3xl">
+    <div className="p-4 md:p-6 space-y-5 md:space-y-6 max-w-3xl">
       <div className="flex items-start justify-between gap-4">
         <div>
           <button onClick={() => router.back()} className="text-xs text-text-400 hover:text-text-700 mb-2">← Back</button>

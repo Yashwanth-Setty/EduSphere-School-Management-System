@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -46,13 +46,13 @@ export default function FinanceReportPage() {
   const exportUrl = `/api/v1/analytics/finance/export?from=${from}&to=${to}`;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-5 md:space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-text-900">Finance Report</h1>
           <p className="text-text-500 text-sm mt-0.5">Monthly fee collection summary</p>
         </div>
-        <Link href="/analytics" className="text-sm text-spira-700 hover:underline">← Analytics</Link>
+        <Link href="/analytics" className="text-sm text-spira-700 hover:underline">â† Analytics</Link>
       </div>
 
       {/* Filters */}
@@ -88,7 +88,7 @@ export default function FinanceReportPage() {
       {data && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { label: "Total Collected", value: `₹ ${data.summary.totalCollected.toLocaleString()}`, color: "text-green-700" },
+            { label: "Total Collected", value: `â‚¹ ${data.summary.totalCollected.toLocaleString()}`, color: "text-green-700" },
             { label: "Transactions", value: data.summary.totalTransactions, color: "text-text-900" },
             { label: "Pending Invoices", value: data.summary.pendingCount, color: "text-yellow-700" },
             { label: "Overdue Invoices", value: data.summary.overdueCount, color: "text-red-600" },
@@ -128,7 +128,7 @@ export default function FinanceReportPage() {
                 {data.rows.map((r) => (
                   <tr key={r.month} className="border-b border-surface-100 last:border-0 hover:bg-surface-50 transition-colors">
                     <td className="px-5 py-3 text-text-700">{r.month}</td>
-                    <td className="px-5 py-3 text-right font-medium text-green-700">₹ {r.collected.toLocaleString()}</td>
+                    <td className="px-5 py-3 text-right font-medium text-green-700">â‚¹ {r.collected.toLocaleString()}</td>
                     <td className="px-5 py-3 text-right text-text-600">{r.transactions}</td>
                   </tr>
                 ))}
@@ -162,7 +162,7 @@ export default function FinanceReportPage() {
                 {Object.entries(data.byMethod).map(([method, amount]) => (
                   <tr key={method} className="border-b border-surface-100 last:border-0 hover:bg-surface-50 transition-colors">
                     <td className="px-5 py-3 text-text-700 capitalize">{method.replace(/_/g, " ")}</td>
-                    <td className="px-5 py-3 text-right font-medium text-green-700">₹ {amount.toLocaleString()}</td>
+                    <td className="px-5 py-3 text-right font-medium text-green-700">â‚¹ {amount.toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -173,3 +173,4 @@ export default function FinanceReportPage() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useAuth } from "@/hooks/useAuth";
 import { Role } from "@spira/types";
@@ -12,9 +12,9 @@ export default function DashboardPage() {
 
   if (isLoading || !user) {
     return (
-      <div className="p-6 space-y-4">
+      <div className="p-4 md:p-6 space-y-4">
         <div className="h-8 bg-surface-100 rounded w-48 animate-pulse" />
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="h-24 bg-surface-100 rounded-lg animate-pulse" />
           ))}
@@ -40,3 +40,4 @@ export default function DashboardPage() {
 
   return <AdminDashboard user={user} />;
 }
+

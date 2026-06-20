@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -41,7 +41,7 @@ export default function NewAnnouncementPage() {
   }
 
   return (
-    <div className="p-6 max-w-2xl">
+    <div className="p-4 md:p-6 max-w-2xl">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-text-900">New Announcement</h1>
         <p className="text-text-500 text-sm mt-0.5">Publish to students, parents, teachers, or the whole school</p>
@@ -60,7 +60,7 @@ export default function NewAnnouncementPage() {
         <div>
           <label className="block text-sm font-medium text-text-700 mb-1">Body</label>
           <textarea value={body} onChange={(e) => setBody(e.target.value)} rows={6}
-            placeholder="Write your announcement here…"
+            placeholder="Write your announcement hereâ€¦"
             className="w-full border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-spira-500 resize-y" />
         </div>
 
@@ -97,7 +97,7 @@ export default function NewAnnouncementPage() {
         <div className="flex gap-3 pt-1">
           <button type="submit" disabled={saving}
             className="px-5 py-2 text-sm font-medium text-white bg-spira-700 rounded-md hover:bg-spira-800 disabled:opacity-50 transition-colors">
-            {saving ? "Saving…" : publish ? "Publish" : "Save as Draft"}
+            {saving ? "Savingâ€¦" : publish ? "Publish" : "Save as Draft"}
           </button>
           <button type="button" onClick={() => router.back()}
             className="px-4 py-2 text-sm font-medium text-text-700 border border-border rounded-md hover:bg-surface-50 transition-colors">
@@ -108,3 +108,4 @@ export default function NewAnnouncementPage() {
     </div>
   );
 }
+

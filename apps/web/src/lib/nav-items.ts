@@ -96,5 +96,5 @@ export const ROLE_BOTTOM_TABS: Record<string, string[]> = {
   [Role.STUDENT]:    ["/dashboard", "/assignments", "/exams"],
   [Role.PARENT]:     ["/dashboard", "/fees", "/documents"],
   [Role.ACCOUNTANT]: ["/dashboard", "/fees", "/analytics"],
-  [Role.COUNSELOR]:  ["/dashboard", "/students", "/ai"],
+  [Role.COUNSELOR]:  ["/dashboard", "/documents", "/ai"],
 };

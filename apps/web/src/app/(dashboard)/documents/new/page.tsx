@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -50,7 +50,7 @@ export default function NewDocumentPage() {
   }
 
   return (
-    <div className="p-6 max-w-xl">
+    <div className="p-4 md:p-6 max-w-xl">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-text-900">Upload Document</h1>
         <p className="text-text-500 text-sm mt-0.5">Register a document in the system</p>
@@ -87,7 +87,7 @@ export default function NewDocumentPage() {
           <input value={storageKey} onChange={(e) => setStorageKey(e.target.value)}
             placeholder="docs/policy/code-of-conduct.pdf"
             className="w-full border border-border rounded-md px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-spira-500" />
-          <p className="text-xs text-text-400 mt-1">Simulated path — replace with real storage URL in production</p>
+          <p className="text-xs text-text-400 mt-1">Simulated path â€” replace with real storage URL in production</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -112,7 +112,7 @@ export default function NewDocumentPage() {
         <div className="flex gap-3 pt-1">
           <button type="submit" disabled={saving}
             className="px-5 py-2 text-sm font-medium text-white bg-spira-700 rounded-md hover:bg-spira-800 disabled:opacity-50 transition-colors">
-            {saving ? "Saving…" : "Save Document"}
+            {saving ? "Savingâ€¦" : "Save Document"}
           </button>
           <button type="button" onClick={() => router.back()}
             className="px-4 py-2 text-sm font-medium text-text-700 border border-border rounded-md hover:bg-surface-50 transition-colors">
@@ -123,3 +123,4 @@ export default function NewDocumentPage() {
     </div>
   );
 }
+

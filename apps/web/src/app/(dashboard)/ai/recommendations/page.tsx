@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -61,13 +61,13 @@ export default function RecommendationsPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-5 md:space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-text-900">AI Recommendations</h1>
           <p className="text-text-500 text-sm mt-0.5">All insights generated for students in this school</p>
         </div>
-        <Link href="/ai" className="text-sm text-spira-700 hover:underline">← AI Insights</Link>
+        <Link href="/ai" className="text-sm text-spira-700 hover:underline">â† AI Insights</Link>
       </div>
 
       {/* Filter */}
@@ -103,7 +103,7 @@ export default function RecommendationsPage() {
         ) : !data || data.data.length === 0 ? (
           <div className="px-6 py-12 text-center">
             <p className="text-text-400 text-sm">No recommendations yet. Run an analysis job from the AI Insights page.</p>
-            <Link href="/ai" className="text-sm text-spira-700 hover:underline mt-2 inline-block">Go to AI Insights →</Link>
+            <Link href="/ai" className="text-sm text-spira-700 hover:underline mt-2 inline-block">Go to AI Insights â†’</Link>
           </div>
         ) : (
           <>
@@ -143,10 +143,10 @@ export default function RecommendationsPage() {
                           <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${RISK_COLOR[riskLevel] ?? "bg-surface-100 text-text-600"}`}>
                             {riskLevel}
                           </span>
-                        ) : "—"}
+                        ) : "â€”"}
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap text-text-600">
-                        {r.confidence != null ? `${Math.round(r.confidence * 100)}%` : "—"}
+                        {r.confidence != null ? `${Math.round(r.confidence * 100)}%` : "â€”"}
                       </td>
                       <td className="px-4 py-3 max-w-xs text-text-700 text-xs leading-relaxed">
                         {r.content}
@@ -188,3 +188,4 @@ export default function RecommendationsPage() {
     </div>
   );
 }
+

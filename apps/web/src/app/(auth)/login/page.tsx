@@ -72,7 +72,7 @@ export default function LoginPage() {
                 onChange={(e) => setForm((f) => ({ ...f, schoolCode: e.target.value }))}
                 aria-describedby={errors.schoolCode ? "schoolCode-error" : undefined}
                 aria-invalid={!!errors.schoolCode}
-                placeholder="e.g. spira-demo"
+                placeholder="e.g. 0000"
                 className={`w-full px-3 py-2 text-sm rounded-md border bg-white transition-colors focus:outline-none focus:ring-2 focus:ring-spira-700 ${
                   errors.schoolCode ? "border-danger text-danger" : "border-border"
                 }`}
