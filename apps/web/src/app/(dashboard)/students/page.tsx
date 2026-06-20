@@ -44,30 +44,74 @@ export default function StudentsPage() {
   );
 
   return (
-    <div className="p-6 space-y-5">
-      <div className="flex items-center justify-between flex-wrap gap-4">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-5">
+      {/* Header */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-text-900">Students</h1>
-          <p className="text-text-500 text-sm mt-0.5">{data?.total ?? 0} enrolled students</p>
+          <h1 className="text-xl md:text-2xl font-semibold text-text-900">Students</h1>
+          <p className="text-text-500 text-sm mt-0.5">{data?.total ?? 0} enrolled</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 w-full md:w-auto">
           <input
             type="search"
-            placeholder="Search by name or admission no."
+            placeholder="Search students…"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             aria-label="Search students"
-            className="px-3 py-2 text-sm border border-border rounded-md w-64 focus:outline-none focus:ring-2 focus:ring-spira-700 bg-white"
+            className="flex-1 md:w-64 px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-spira-700 bg-white"
           />
           {canAdd && (
-            <button className="px-4 py-2 text-sm font-medium text-white bg-spira-700 rounded-md hover:bg-spira-800 transition-colors">
-              + Add student
+            <button className="px-4 py-2 text-sm font-medium text-white bg-spira-700 rounded-lg hover:bg-spira-800 active:bg-spira-900 transition-colors whitespace-nowrap">
+              + Add
             </button>
           )}
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border border-border shadow-sm overflow-hidden">
+      {/* Mobile card list */}
+      <div className="md:hidden space-y-2">
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="bg-white rounded-xl border border-border p-4 animate-pulse space-y-2">
+              <div className="h-4 bg-surface-100 rounded w-1/3" />
+              <div className="h-4 bg-surface-100 rounded w-2/3" />
+              <div className="h-3 bg-surface-100 rounded w-1/2" />
+            </div>
+          ))
+        ) : data?.data.length === 0 ? (
+          <div className="bg-white rounded-xl border border-border p-8 text-center text-text-500 text-sm">
+            No students found
+          </div>
+        ) : (
+          data?.data.map((s) => (
+            <div key={s.id} className="bg-white rounded-xl border border-border p-4 active:bg-surface-50 transition-colors">
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-text-900">{s.firstName} {s.lastName}</p>
+                  <p className="text-xs font-mono text-text-500 mt-0.5">{s.admissionNo}</p>
+                  <div className="flex items-center gap-2 mt-2 flex-wrap">
+                    {s.section && (
+                      <span className="text-xs bg-surface-100 text-text-600 px-2 py-0.5 rounded-full">
+                        {s.section.name}
+                      </span>
+                    )}
+                    <span className="text-xs text-text-500 capitalize">{s.gender}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${s.enrollmentStatus === "active" ? "bg-success/10 text-success" : "bg-surface-100 text-text-500"}`}>
+                      {s.enrollmentStatus}
+                    </span>
+                  </div>
+                  {s.user?.email && (
+                    <p className="text-xs text-text-400 mt-1.5 truncate">{s.user.email}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden md:block bg-white rounded-lg border border-border shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm" role="grid" aria-label="Students list">
             <thead>
@@ -85,16 +129,12 @@ export default function StudentsPage() {
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="border-b border-surface-100">
                     {Array.from({ length: 6 }).map((_, j) => (
-                      <td key={j} className="px-4 py-3">
-                        <div className="h-4 bg-surface-100 rounded animate-pulse w-24" />
-                      </td>
+                      <td key={j} className="px-4 py-3"><div className="h-4 bg-surface-100 rounded animate-pulse w-24" /></td>
                     ))}
                   </tr>
                 ))
               ) : data?.data.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-12 text-center text-text-500">No students found</td>
-                </tr>
+                <tr><td colSpan={6} className="px-4 py-12 text-center text-text-500">No students found</td></tr>
               ) : (
                 data?.data.map((s) => (
                   <tr key={s.id} className="border-b border-surface-100 hover:bg-surface-50 cursor-pointer transition-colors" tabIndex={0} role="row">
@@ -114,17 +154,27 @@ export default function StudentsPage() {
             </tbody>
           </table>
         </div>
-
         {data && data.totalPages > 1 && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-surface-100">
             <p className="text-xs text-text-500">Page {data.page} of {data.totalPages} · {data.total} students</p>
             <div className="flex items-center gap-2">
-              <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors" aria-label="Previous page">Previous</button>
-              <button disabled={page >= data.totalPages} onClick={() => setPage((p) => p + 1)} className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors" aria-label="Next page">Next</button>
+              <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors">Previous</button>
+              <button disabled={page >= data.totalPages} onClick={() => setPage((p) => p + 1)} className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors">Next</button>
             </div>
           </div>
         )}
       </div>
+
+      {/* Mobile pagination */}
+      {data && data.totalPages > 1 && (
+        <div className="md:hidden flex items-center justify-between pt-1">
+          <p className="text-xs text-text-500">Page {data.page} of {data.totalPages}</p>
+          <div className="flex gap-2">
+            <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="px-4 py-2 text-xs border border-border rounded-lg disabled:opacity-40 bg-white">Prev</button>
+            <button disabled={page >= data.totalPages} onClick={() => setPage((p) => p + 1)} className="px-4 py-2 text-xs border border-border rounded-lg disabled:opacity-40 bg-white">Next</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

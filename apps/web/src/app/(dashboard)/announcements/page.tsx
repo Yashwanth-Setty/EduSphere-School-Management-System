@@ -46,10 +46,10 @@ export default function AnnouncementsPage() {
   );
 
   return (
-    <div className="p-6 space-y-5">
-      <div className="flex items-center justify-between flex-wrap gap-4">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-5">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-text-900">Announcements</h1>
+          <h1 className="text-xl md:text-2xl font-semibold text-text-900">Announcements</h1>
           <p className="text-text-500 text-sm mt-0.5">{data?.total ?? 0} announcements</p>
         </div>
         <div className="flex items-center gap-3">
