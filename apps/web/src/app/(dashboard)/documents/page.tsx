@@ -31,6 +31,18 @@ const SCOPE_BADGE: Record<string, string> = {
   counselor:    "bg-purple-100 text-purple-700",
 };
 
+const CAT_ICON: Record<string, string> = {
+  textbook:       "📚",
+  notes:          "📓",
+  question_paper: "📝",
+  circular:       "📢",
+  report_card:    "🏅",
+  policy:         "📋",
+  finance:        "💰",
+  counselor:      "🧠",
+  general:        "📄",
+};
+
 function fmtBytes(b: number) {
   if (b < 1024) return `${b} B`;
   if (b < 1024 * 1024) return `${(b / 1024).toFixed(0)} KB`;
@@ -74,13 +86,22 @@ export default function DocumentsPage() {
 
       {/* Category filter pills */}
       <div className="flex gap-2 overflow-x-auto pb-1">
-        {["", "policy", "circular", "report_card", "finance", "counselor", "general"].map((c) => (
+        {[
+          { value: "",               label: "All",           icon: "📁" },
+          { value: "textbook",       label: "Textbooks",     icon: "📚" },
+          { value: "notes",          label: "Notes",         icon: "📓" },
+          { value: "question_paper", label: "Question Papers",icon: "📝" },
+          { value: "circular",       label: "Circulars",     icon: "📢" },
+          { value: "report_card",    label: "Report Cards",  icon: "🏅" },
+          { value: "policy",         label: "Policies",      icon: "📋" },
+          { value: "general",        label: "General",       icon: "📄" },
+        ].map((c) => (
           <button
-            key={c}
-            onClick={() => { setCategory(c); setPage(1); }}
-            className={`px-3 py-1.5 text-xs rounded-full border whitespace-nowrap transition-colors ${category === c ? "bg-spira-700 text-white border-spira-700" : "border-border text-text-600 bg-white"}`}
+            key={c.value}
+            onClick={() => { setCategory(c.value); setPage(1); }}
+            className={`px-3 py-1.5 text-xs rounded-full border whitespace-nowrap transition-colors flex items-center gap-1 ${category === c.value ? "bg-spira-700 text-white border-spira-700" : "border-border text-text-600 bg-white"}`}
           >
-            {c === "" ? "All" : c.replace("_", " ")}
+            <span>{c.icon}</span> {c.label}
           </button>
         ))}
       </div>
@@ -116,7 +137,7 @@ export default function DocumentsPage() {
           data?.data.map((doc) => (
             <div key={doc.id} className="bg-white rounded-xl border border-border p-4">
               <div className="flex items-start gap-3">
-                <span className="text-2xl mt-0.5">📄</span>
+                <span className="text-2xl mt-0.5">{CAT_ICON[doc.category] ?? "📄"}</span>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-text-900 truncate">{doc.title}</p>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">

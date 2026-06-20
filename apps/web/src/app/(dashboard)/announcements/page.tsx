@@ -14,7 +14,17 @@ interface Announcement {
   audienceScope: string; channel: string;
   isPublished: boolean; publishedAt: string | null;
   expiresAt: string | null; createdAt: string;
+  tags?: string[];
 }
+
+const CHANNEL_STYLE: Record<string, { label: string; cls: string; icon: string }> = {
+  class:   { label: "Class",         cls: "bg-indigo-100 text-indigo-700",  icon: "🏫" },
+  sports:  { label: "Sports",        cls: "bg-orange-100 text-orange-700",  icon: "⚽" },
+  science: { label: "Science Club",  cls: "bg-teal-100 text-teal-700",     icon: "🔬" },
+  general: { label: "General",       cls: "bg-gray-100 text-gray-600",     icon: "📣" },
+  finance: { label: "Finance",       cls: "bg-yellow-100 text-yellow-700", icon: "💰" },
+  events:  { label: "Events",        cls: "bg-purple-100 text-purple-700", icon: "🎉" },
+};
 
 interface Paged { data: Announcement[]; total: number; page: number; totalPages: number }
 
@@ -30,6 +40,7 @@ export default function AnnouncementsPage() {
   const { user } = useAuth();
   const [page, setPage] = useState(1);
   const [showDrafts, setShowDrafts] = useState(false);
+  const [channel, setChannel] = useState("");
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
@@ -39,6 +50,7 @@ export default function AnnouncementsPage() {
 
   const params = new URLSearchParams({ page: String(page), pageSize: "20" });
   if (showDrafts) params.set("includeUnpublished", "true");
+  if (channel) params.set("channel", channel);
 
   const { data, isLoading } = useSWR<Paged>(
     mounted && !!getAccessToken() ? `/announcements?${params}` : null,
@@ -75,6 +87,22 @@ export default function AnnouncementsPage() {
         </div>
       </div>
 
+      {/* Channel filter pills */}
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {[
+          { value: "", label: "All Channels" },
+          ...Object.entries(CHANNEL_STYLE).map(([v, c]) => ({ value: v, label: `${c.icon} ${c.label}` })),
+        ].map((c) => (
+          <button
+            key={c.value}
+            onClick={() => { setChannel(c.value); setPage(1); }}
+            className={`px-3 py-1.5 text-xs rounded-full border whitespace-nowrap transition-colors ${channel === c.value ? "bg-spira-700 text-white border-spira-700" : "border-border text-text-600 bg-white"}`}
+          >
+            {c.label}
+          </button>
+        ))}
+      </div>
+
       <div className="space-y-3">
         {isLoading
           ? Array.from({ length: 4 }).map((_, i) => (
@@ -89,35 +117,45 @@ export default function AnnouncementsPage() {
                 No announcements yet.
               </div>
             )
-            : data?.data.map((ann) => (
-              <Link
-                key={ann.id}
-                href={`/announcements/${ann.id}`}
-                className="block bg-white rounded-lg border border-border shadow-sm p-5 hover:border-spira-300 transition-colors"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${SCOPE_STYLE[ann.audienceScope] ?? "bg-surface-100 text-text-500"}`}>
-                        {ann.audienceScope}
-                      </span>
-                      {!ann.isPublished && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
-                          Draft
-                        </span>
-                      )}
+            : data?.data.map((ann) => {
+              const ch = CHANNEL_STYLE[ann.channel] ?? CHANNEL_STYLE.general;
+              return (
+                <Link
+                  key={ann.id}
+                  href={`/announcements/${ann.id}`}
+                  className="block bg-white rounded-xl border border-border shadow-sm p-5 hover:border-spira-300 hover:shadow-md transition-all group"
+                >
+                  <div className="flex items-start gap-4">
+                    {/* Channel icon */}
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0 ${ch.cls.split(" ")[0]}`}>
+                      {ch.icon}
                     </div>
-                    <h2 className="font-semibold text-text-900 truncate">{ann.title}</h2>
-                    <p className="text-text-500 text-sm mt-1 line-clamp-2">{ann.body}</p>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${ch.cls}`}>
+                          {ch.label}
+                        </span>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${SCOPE_STYLE[ann.audienceScope] ?? "bg-surface-100 text-text-500"}`}>
+                          {ann.audienceScope}
+                        </span>
+                        {!ann.isPublished && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700">
+                            Draft
+                          </span>
+                        )}
+                      </div>
+                      <h2 className="font-semibold text-text-900 group-hover:text-spira-700 truncate transition-colors">{ann.title}</h2>
+                      <p className="text-text-500 text-sm mt-1 line-clamp-2">{ann.body}</p>
+                    </div>
+                    <span className="text-xs text-text-400 shrink-0 mt-0.5">
+                      {ann.publishedAt
+                        ? new Date(ann.publishedAt).toLocaleDateString("en-IN", { timeZone: "UTC" })
+                        : new Date(ann.createdAt).toLocaleDateString("en-IN", { timeZone: "UTC" })}
+                    </span>
                   </div>
-                  <span className="text-xs text-text-400 shrink-0">
-                    {ann.publishedAt
-                      ? new Date(ann.publishedAt).toLocaleDateString("en-IN", { timeZone: "UTC" })
-                      : new Date(ann.createdAt).toLocaleDateString("en-IN", { timeZone: "UTC" })}
-                  </span>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
       </div>
 
       {data && data.totalPages > 1 && (

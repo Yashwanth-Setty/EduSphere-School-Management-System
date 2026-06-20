@@ -19,7 +19,8 @@
       "mcp__Claude_in_Chrome__computer",
       "mcp__Claude_in_Chrome__javascript_tool",
       "mcp__Claude_in_Chrome__read_page",
-      "PowerShell(Get-Process -Name \"node\" | Where-Object { $_.MainWindowTitle -eq \"\" } | Stop-Process -Force 2>&1; Write-Host \"Done\")"
+      "PowerShell(Get-Process -Name \"node\" | Where-Object { $_.MainWindowTitle -eq \"\" } | Stop-Process -Force 2>&1; Write-Host \"Done\")",
+      "Bash(xargs grep -n \"STUDENT\\\\|Role\")"
     ]
   }
 }

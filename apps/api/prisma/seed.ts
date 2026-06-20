@@ -522,24 +522,37 @@ async function main() {
   const adminUser = await prisma.user.findUnique({ where: { schoolId_email: { schoolId: school.id, email: "admin@mail.com" } } });
 
   if (adminUser) {
-    // Documents — one per visibility scope
+    // Documents — textbooks, notes, circulars, report cards
     const docs = [
-      { id: "seed-doc-policy", category: "policy", title: "Student Code of Conduct 2026-27", storageKey: "docs/policy/code-of-conduct-2026.pdf", mimeType: "application/pdf", sizeBytes: 245760, visibilityScope: "school_admin" },
-      { id: "seed-doc-circular", category: "circular", title: "Term 1 Academic Calendar", storageKey: "docs/circulars/academic-calendar-t1.pdf", mimeType: "application/pdf", sizeBytes: 102400, visibilityScope: "student" },
-      { id: "seed-doc-section", category: "circular", title: "Grade 8-A Timetable Revision", storageKey: "docs/section/8a-timetable-rev1.pdf", mimeType: "application/pdf", sizeBytes: 51200, visibilityScope: "section" },
-      { id: "seed-doc-finance", category: "finance", title: "Fee Collection Report June 2026", storageKey: "docs/finance/fee-report-jun-2026.xlsx", mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", sizeBytes: 81920, visibilityScope: "finance" },
-      { id: "seed-doc-counselor", category: "counselor", title: "Student Wellbeing Guidelines", storageKey: "docs/counselor/wellbeing-guide.pdf", mimeType: "application/pdf", sizeBytes: 163840, visibilityScope: "counselor" },
-      { id: "seed-doc-report", category: "report_card", title: "Ava Patel – Term 1 Report Card", storageKey: "docs/reports/ava-patel-t1-2026.pdf", mimeType: "application/pdf", sizeBytes: 92160, visibilityScope: "student" },
+      { id: "seed-doc-policy", category: "policy", title: "Student Code of Conduct 2026-27", storageKey: "docs/policy/code-of-conduct-2026.pdf", mimeType: "application/pdf", sizeBytes: 245760, visibilityScope: "school_admin", tags: ["policy", "conduct"] },
+      { id: "seed-doc-circular", category: "circular", title: "Term 1 Academic Calendar", storageKey: "docs/circulars/academic-calendar-t1.pdf", mimeType: "application/pdf", sizeBytes: 102400, visibilityScope: "student", tags: ["calendar", "term1"] },
+      { id: "seed-doc-section", category: "circular", title: "Grade 8-A Timetable Revision", storageKey: "docs/section/8a-timetable-rev1.pdf", mimeType: "application/pdf", sizeBytes: 51200, visibilityScope: "section", tags: ["timetable"] },
+      { id: "seed-doc-finance", category: "finance", title: "Fee Collection Report June 2026", storageKey: "docs/finance/fee-report-jun-2026.xlsx", mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", sizeBytes: 81920, visibilityScope: "finance", tags: ["finance"] },
+      { id: "seed-doc-counselor", category: "counselor", title: "Student Wellbeing Guidelines", storageKey: "docs/counselor/wellbeing-guide.pdf", mimeType: "application/pdf", sizeBytes: 163840, visibilityScope: "counselor", tags: ["wellbeing"] },
+      { id: "seed-doc-report", category: "report_card", title: "Ava Patel – Term 1 Report Card", storageKey: "docs/reports/ava-patel-t1-2026.pdf", mimeType: "application/pdf", sizeBytes: 92160, visibilityScope: "student", tags: ["report", "results"] },
+      // Textbooks
+      { id: "seed-doc-math-tb", category: "textbook", title: "Mathematics Grade 8 – NCERT Textbook", storageKey: "docs/textbooks/math-grade8-ncert.pdf", mimeType: "application/pdf", sizeBytes: 5242880, visibilityScope: "student", tags: ["textbook", "math", "grade8"] },
+      { id: "seed-doc-sci-tb", category: "textbook", title: "Science Grade 8 – NCERT Textbook", storageKey: "docs/textbooks/science-grade8-ncert.pdf", mimeType: "application/pdf", sizeBytes: 6291456, visibilityScope: "student", tags: ["textbook", "science", "grade8"] },
+      { id: "seed-doc-eng-tb", category: "textbook", title: "English Honeydew Grade 8 – NCERT", storageKey: "docs/textbooks/english-honeydew-grade8.pdf", mimeType: "application/pdf", sizeBytes: 4194304, visibilityScope: "student", tags: ["textbook", "english", "grade8"] },
+      { id: "seed-doc-soc-tb", category: "textbook", title: "Social Studies Grade 8 – NCERT", storageKey: "docs/textbooks/social-grade8-ncert.pdf", mimeType: "application/pdf", sizeBytes: 4718592, visibilityScope: "student", tags: ["textbook", "social", "grade8"] },
+      // Notes
+      { id: "seed-doc-math-notes", category: "notes", title: "Mathematics – Algebra Quick Notes", storageKey: "docs/notes/math-algebra-quick-notes.pdf", mimeType: "application/pdf", sizeBytes: 512000, visibilityScope: "student", tags: ["notes", "math", "algebra"] },
+      { id: "seed-doc-sci-notes", category: "notes", title: "Science – Light & Optics Summary", storageKey: "docs/notes/science-optics-summary.pdf", mimeType: "application/pdf", sizeBytes: 409600, visibilityScope: "student", tags: ["notes", "science", "optics"] },
+      { id: "seed-doc-eng-notes", category: "notes", title: "English – Essay Writing Tips", storageKey: "docs/notes/english-essay-tips.pdf", mimeType: "application/pdf", sizeBytes: 307200, visibilityScope: "student", tags: ["notes", "english", "writing"] },
+      // Question papers
+      { id: "seed-doc-math-qp", category: "question_paper", title: "Mathematics – Previous Year Question Paper 2025", storageKey: "docs/qpapers/math-grade8-2025.pdf", mimeType: "application/pdf", sizeBytes: 358400, visibilityScope: "student", tags: ["question_paper", "math", "2025"] },
+      { id: "seed-doc-sci-qp", category: "question_paper", title: "Science – Previous Year Question Paper 2025", storageKey: "docs/qpapers/science-grade8-2025.pdf", mimeType: "application/pdf", sizeBytes: 327680, visibilityScope: "student", tags: ["question_paper", "science", "2025"] },
     ];
     for (const d of docs) {
+      const { tags, ...docData } = d;
       await prisma.document.upsert({
         where: { id: d.id },
         update: {},
-        create: { ...d, schoolId: school.id, uploadedById: adminUser.id, tags: [] },
+        create: { ...docData, schoolId: school.id, uploadedById: adminUser.id, tags: tags ?? [] },
       });
     }
 
-    // Announcements
+    // Announcements — school-wide + group channels
     const announcements = [
       {
         id: "seed-ann-school",
@@ -577,10 +590,58 @@ async function main() {
         isPublished: true,
         publishedAt: new Date("2026-06-18T08:30:00Z"),
       },
+      // Class group
+      {
+        id: "seed-ann-class-1",
+        title: "Grade 8-A: Assignment Submission Reminder",
+        body: "Dear 8-A students, please remember that the Science Lab Report is due on 28 June. Submit your work via the Assignments section before 11:59 PM.",
+        audienceScope: "students",
+        channel: "in_app",
+        isPublished: true,
+        publishedAt: new Date("2026-06-20T07:00:00Z"),
+      },
+      {
+        id: "seed-ann-class-2",
+        title: "Grade 8-A: Maths Extra Class on Saturday",
+        body: "An extra revision class for Grade 8-A Mathematics will be held on Saturday, 27 June from 10:00 AM to 12:00 PM in Room 101. Attendance is strongly recommended.",
+        audienceScope: "students",
+        channel: "in_app",
+        isPublished: true,
+        publishedAt: new Date("2026-06-19T14:00:00Z"),
+      },
+      // Sports group
+      {
+        id: "seed-ann-sports-1",
+        title: "Inter-School Cricket Tournament – Team Selection",
+        body: "Trials for the inter-school cricket tournament will be held on the school grounds on 25 June at 3:30 PM. All interested Grade 7 & 8 students are welcome to participate.",
+        audienceScope: "students",
+        channel: "in_app",
+        isPublished: true,
+        publishedAt: new Date("2026-06-18T12:00:00Z"),
+      },
+      {
+        id: "seed-ann-sports-2",
+        title: "Annual Sports Day – 15 August 2026",
+        body: "Mark your calendars! Annual Sports Day is scheduled for 15 August 2026. Events include 100m sprint, long jump, relay race, and tug-of-war. Registrations open from 1 July.",
+        audienceScope: "school",
+        channel: "in_app",
+        isPublished: true,
+        publishedAt: new Date("2026-06-17T09:00:00Z"),
+      },
+      // Science club
+      {
+        id: "seed-ann-sci-club",
+        title: "Science Club: Robotics Workshop Next Week",
+        body: "SPIRA Science Club is hosting a Robotics & AI workshop on 26 June from 2:00 PM to 5:00 PM in Lab A. Limited seats — register with your Science teacher by 23 June.",
+        audienceScope: "students",
+        channel: "in_app",
+        isPublished: true,
+        publishedAt: new Date("2026-06-19T10:00:00Z"),
+      },
       {
         id: "seed-ann-draft",
-        title: "Upcoming Sports Day – Draft",
-        body: "Sports Day is tentatively planned for 15 August. Details TBD.",
+        title: "Upcoming Cultural Fest – Planning Draft",
+        body: "Cultural Fest tentatively planned for October 2026. Coordinators to share event list by end of July.",
         audienceScope: "school",
         channel: "in_app",
         isPublished: false,

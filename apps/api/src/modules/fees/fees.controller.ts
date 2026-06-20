@@ -52,6 +52,24 @@ export class FeesController {
     return this.fees.createPlan(dto, user.schoolId);
   }
 
+  // ── Student/Parent invoice shortcut ───────────────────────────────────────
+
+  @Get("my-invoices")
+  @Roles(Role.STUDENT, Role.PARENT)
+  @ApiOperation({ summary: "List invoices for the current student or parent's children" })
+  @ApiQuery({ name: "page", required: false })
+  @ApiQuery({ name: "pageSize", required: false })
+  getMyInvoices(
+    @CurrentUser() user: { id: string; roles: string[] },
+    @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query("pageSize", new DefaultValuePipe(20), ParseIntPipe) pageSize: number,
+  ) {
+    if (user.roles.includes(Role.PARENT)) {
+      return this.fees.listLinkedInvoices(user.id, page, pageSize);
+    }
+    return this.fees.listMyInvoices(user.id, page, pageSize);
+  }
+
   // ── Invoices — admin/accountant ────────────────────────────────────────────
 
   @Get("invoices")
