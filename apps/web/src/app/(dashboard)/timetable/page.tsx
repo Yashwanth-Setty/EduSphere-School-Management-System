@@ -84,11 +84,12 @@ export default function TimetablePage() {
     (url: string) => apiClient.get<Section[]>(url),
   );
 
-  // Students get their own timetable automatically
-  const { data: mySlots, isLoading: myLoading } = useSWR<TimetableSlot[]>(
+  // Students get their own timetable automatically; API returns { data: TimetableSlot[] }
+  const { data: myRaw, isLoading: myLoading } = useSWR<{ data: TimetableSlot[] } | TimetableSlot[]>(
     hasToken && isStudentOrParent ? "/timetable/slots" : null,
-    (url: string) => apiClient.get<TimetableSlot[]>(url),
+    (url: string) => apiClient.get<{ data: TimetableSlot[] } | TimetableSlot[]>(url),
   );
+  const mySlots: TimetableSlot[] = Array.isArray(myRaw) ? myRaw : (myRaw as { data: TimetableSlot[] })?.data ?? [];
 
   const { data: adminSlots, isLoading: adminLoading } = useSWR<TimetableSlot[]>(
     hasToken && !isStudentOrParent && selectedSection
@@ -97,7 +98,7 @@ export default function TimetablePage() {
     (url: string) => apiClient.get<TimetableSlot[]>(url),
   );
 
-  const slots = isStudentOrParent ? (mySlots ?? []) : (adminSlots ?? []);
+  const slots = isStudentOrParent ? mySlots : (adminSlots ?? []);
   const isLoading = isStudentOrParent ? myLoading : adminLoading;
 
   const grid: Record<number, Record<number, TimetableSlot>> = {};

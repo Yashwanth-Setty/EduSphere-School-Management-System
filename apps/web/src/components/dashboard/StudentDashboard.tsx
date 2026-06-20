@@ -133,26 +133,26 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
 
       {/* KPI cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-        <div className="bg-gradient-to-br from-spira-600 to-spira-800 rounded-xl p-4 text-white shadow-sm">
+        <Link href="/timetable" className="bg-gradient-to-br from-spira-600 to-spira-800 rounded-xl p-4 text-white shadow-sm hover:shadow-md hover:brightness-110 transition-all">
           <p className="text-spira-200 text-xs font-medium uppercase tracking-wide mb-1">Today&apos;s Classes</p>
           <p className="text-3xl font-bold">{todaySlots.length}</p>
           <p className="text-spira-200 text-xs mt-1">periods scheduled</p>
-        </div>
-        <div className="bg-gradient-to-br from-green-500 to-green-700 rounded-xl p-4 text-white shadow-sm">
+        </Link>
+        <Link href="/attendance" className="bg-gradient-to-br from-green-500 to-green-700 rounded-xl p-4 text-white shadow-sm hover:shadow-md hover:brightness-110 transition-all">
           <p className="text-green-100 text-xs font-medium uppercase tracking-wide mb-1">Attendance</p>
           <p className="text-3xl font-bold">{attendancePct !== null ? `${attendancePct}%` : "—"}</p>
           <p className="text-green-100 text-xs mt-1">last 30 days</p>
-        </div>
-        <div className="bg-gradient-to-br from-orange-500 to-orange-700 rounded-xl p-4 text-white shadow-sm">
+        </Link>
+        <Link href="/assignments" className="bg-gradient-to-br from-orange-500 to-orange-700 rounded-xl p-4 text-white shadow-sm hover:shadow-md hover:brightness-110 transition-all">
           <p className="text-orange-100 text-xs font-medium uppercase tracking-wide mb-1">Assignments</p>
           <p className="text-3xl font-bold">{assignments?.total ?? "—"}</p>
           <p className="text-orange-100 text-xs mt-1">total</p>
-        </div>
-        <div className={`rounded-xl p-4 text-white shadow-sm ${pendingInvoices.length > 0 ? "bg-gradient-to-br from-red-500 to-red-700" : "bg-gradient-to-br from-emerald-500 to-emerald-700"}`}>
+        </Link>
+        <Link href="/fees" className={`rounded-xl p-4 text-white shadow-sm hover:shadow-md hover:brightness-110 transition-all ${pendingInvoices.length > 0 ? "bg-gradient-to-br from-red-500 to-red-700" : "bg-gradient-to-br from-emerald-500 to-emerald-700"}`}>
           <p className="text-white/80 text-xs font-medium uppercase tracking-wide mb-1">Pending Fees</p>
           <p className="text-3xl font-bold">{pendingInvoices.length}</p>
           <p className="text-white/70 text-xs mt-1">{pendingInvoices.length > 0 ? "unpaid invoices" : "all clear"}</p>
-        </div>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
