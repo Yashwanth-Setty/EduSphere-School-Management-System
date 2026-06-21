@@ -1,11 +1,34 @@
 import { getAccessToken, getRefreshToken, setAuthTokens, clearAuthTokens } from "./auth";
+import { isMockToken, mockGetUserFromToken, mockLogin } from "./mock-auth";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api/v1";
+
+// Use mock auth when no real API URL is configured (i.e. deployed without a backend)
+const IS_DEMO = !process.env.NEXT_PUBLIC_API_URL;
 
 class ApiClient {
   private refreshing: Promise<void> | null = null;
 
   private async request<T>(method: string, path: string, body?: unknown, retry = true): Promise<T> {
+    // ── Mock intercepts ──────────────────────────────────────────────────────
+    if (IS_DEMO || isMockToken(getAccessToken() ?? "")) {
+      if (path === "/auth/login" && method === "POST") {
+        const { schoolCode, email, password } = body as { schoolCode: string; email: string; password: string };
+        return mockLogin(schoolCode, email, password) as T;
+      }
+      if (path === "/auth/me" && method === "GET") {
+        const token = getAccessToken() ?? "";
+        const user = isMockToken(token) ? mockGetUserFromToken(token) : null;
+        if (!user) throw new Error("Unauthenticated");
+        return user as T;
+      }
+      if (path === "/auth/refresh") {
+        const token = getAccessToken() ?? "";
+        if (isMockToken(token)) return { accessToken: token, refreshToken: token, expiresIn: 900 } as T;
+      }
+      if (path.startsWith("/auth/logout")) return undefined as T;
+    }
+    // ── Real API ─────────────────────────────────────────────────────────────
     const token = getAccessToken();
     const res = await fetch(`${API_URL}${path}`, {
       method,
@@ -34,16 +57,10 @@ class ApiClient {
     if (!this.refreshing) {
       this.refreshing = (async () => {
         const refreshToken = getRefreshToken();
-        if (!refreshToken) {
-          clearAuthTokens();
-          return;
-        }
+        if (!refreshToken) { clearAuthTokens(); return; }
         try {
           const data = await this.request<{ accessToken: string; refreshToken: string }>(
-            "POST",
-            "/auth/refresh",
-            { refreshToken },
-            false,
+            "POST", "/auth/refresh", { refreshToken }, false,
           );
           setAuthTokens(data.accessToken, data.refreshToken ?? refreshToken);
         } catch {
