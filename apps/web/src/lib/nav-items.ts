@@ -48,7 +48,7 @@ export const NAV_ITEMS: NavItem[] = [
     label: "Assignments",
     href: "/assignments",
     icon: "📝",
-    roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT],
+    roles: [Role.TEACHER, Role.STUDENT],
   },
   {
     label: "Exams & Results",
