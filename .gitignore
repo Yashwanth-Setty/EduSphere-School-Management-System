@@ -10,3 +10,5 @@ build
 coverage
 prisma/generated
 *.tsbuildinfo
+
+.vercel
