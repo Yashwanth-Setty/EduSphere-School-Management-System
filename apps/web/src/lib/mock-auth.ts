@@ -43,6 +43,12 @@ export function mockGetUserFromToken(token: string): AuthUser | null {
   return DEMO_USERS[email]?.user ?? null;
 }
 
+export function isMockCredentials(schoolCode: string, email: string, password: string): boolean {
+  if (schoolCode !== "0000") return false;
+  const entry = DEMO_USERS[email.toLowerCase()];
+  return !!entry && entry.password === password;
+}
+
 export function mockLogin(
   schoolCode: string,
   email: string,
