@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@spira/types";
+import { Role } from "@/types";
 import { canCreate } from "@/lib/permissions";
 
 interface Student {
@@ -54,7 +54,7 @@ export default function StudentsPage() {
         <div className="flex items-center gap-2 w-full md:w-auto">
           <input
             type="search"
-            placeholder="Search students…"
+            placeholder="Search studentsâ€¦"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             aria-label="Search students"
@@ -140,14 +140,14 @@ export default function StudentsPage() {
                   <tr key={s.id} className="border-b border-surface-100 hover:bg-surface-50 cursor-pointer transition-colors" tabIndex={0} role="row">
                     <td className="px-4 py-3 font-mono text-xs text-text-500">{s.admissionNo}</td>
                     <td className="px-4 py-3 font-medium text-text-900">{s.firstName} {s.lastName}</td>
-                    <td className="px-4 py-3 text-text-500">{s.section?.name ?? "—"}</td>
+                    <td className="px-4 py-3 text-text-500">{s.section?.name ?? "â€”"}</td>
                     <td className="px-4 py-3 text-text-500 capitalize">{s.gender}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${s.enrollmentStatus === "active" ? "bg-success/10 text-success" : "bg-text-500/10 text-text-500"}`}>
                         {s.enrollmentStatus}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-text-500 text-xs">{s.user?.email ?? "—"}</td>
+                    <td className="px-4 py-3 text-text-500 text-xs">{s.user?.email ?? "â€”"}</td>
                   </tr>
                 ))
               )}
@@ -156,7 +156,7 @@ export default function StudentsPage() {
         </div>
         {data && data.totalPages > 1 && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-surface-100">
-            <p className="text-xs text-text-500">Page {data.page} of {data.totalPages} · {data.total} students</p>
+            <p className="text-xs text-text-500">Page {data.page} of {data.totalPages} Â· {data.total} students</p>
             <div className="flex items-center gap-2">
               <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors">Previous</button>
               <button disabled={page >= data.totalPages} onClick={() => setPage((p) => p + 1)} className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors">Next</button>

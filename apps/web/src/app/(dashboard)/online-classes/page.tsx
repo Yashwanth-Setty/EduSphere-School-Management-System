@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@spira/types";
+import { Role } from "@/types";
 
 interface OnlineClass {
   id: string;
@@ -64,7 +64,7 @@ export default function OnlineClassesPage() {
         </div>
       ) : classes.length === 0 ? (
         <div className="bg-white rounded-xl border border-border p-12 text-center">
-          <p className="text-4xl mb-3">🎥</p>
+          <p className="text-4xl mb-3">ðŸŽ¥</p>
           <p className="font-medium text-text-900">No online classes yet</p>
           <p className="text-text-500 text-sm mt-1">Scheduled sessions will appear here.</p>
         </div>
@@ -112,10 +112,10 @@ function ClassCard({ oc }: { oc: OnlineClass }) {
             {oc.status.charAt(0).toUpperCase() + oc.status.slice(1)}
           </span>
         </div>
-        <p className="text-sm text-text-500 mt-0.5">{oc.courseOffering.course.name} · {oc.courseOffering.section.name}</p>
+        <p className="text-sm text-text-500 mt-0.5">{oc.courseOffering.course.name} Â· {oc.courseOffering.section.name}</p>
         <p className="text-xs text-text-400 mt-1">
           {new Date(oc.scheduledAt).toLocaleString("en-IN", { timeZone: "UTC", dateStyle: "medium", timeStyle: "short" })}
-          {" "}· {oc.durationMins} min · {oc.host.firstName} {oc.host.lastName}
+          {" "}Â· {oc.durationMins} min Â· {oc.host.firstName} {oc.host.lastName}
         </p>
       </div>
       {oc.status !== "completed" && (

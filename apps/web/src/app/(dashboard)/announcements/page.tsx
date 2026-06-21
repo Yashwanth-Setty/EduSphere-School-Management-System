@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@spira/types";
+import { Role } from "@/types";
 import { canCreate } from "@/lib/permissions";
 
 interface Announcement {
@@ -18,12 +18,12 @@ interface Announcement {
 }
 
 const CHANNEL_STYLE: Record<string, { label: string; cls: string; icon: string }> = {
-  class:   { label: "Class",         cls: "bg-indigo-100 text-indigo-700",  icon: "🏫" },
-  sports:  { label: "Sports",        cls: "bg-orange-100 text-orange-700",  icon: "⚽" },
-  science: { label: "Science Club",  cls: "bg-teal-100 text-teal-700",     icon: "🔬" },
-  general: { label: "General",       cls: "bg-gray-100 text-gray-600",     icon: "📣" },
-  finance: { label: "Finance",       cls: "bg-yellow-100 text-yellow-700", icon: "💰" },
-  events:  { label: "Events",        cls: "bg-purple-100 text-purple-700", icon: "🎉" },
+  class:   { label: "Class",         cls: "bg-indigo-100 text-indigo-700",  icon: "ðŸ«" },
+  sports:  { label: "Sports",        cls: "bg-orange-100 text-orange-700",  icon: "âš½" },
+  science: { label: "Science Club",  cls: "bg-teal-100 text-teal-700",     icon: "ðŸ”¬" },
+  general: { label: "General",       cls: "bg-gray-100 text-gray-600",     icon: "ðŸ“£" },
+  finance: { label: "Finance",       cls: "bg-yellow-100 text-yellow-700", icon: "ðŸ’°" },
+  events:  { label: "Events",        cls: "bg-purple-100 text-purple-700", icon: "ðŸŽ‰" },
 };
 
 interface Paged { data: Announcement[]; total: number; page: number; totalPages: number }

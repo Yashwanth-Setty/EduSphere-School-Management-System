@@ -1,13 +1,13 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
-import { AuthUser, Role } from "@spira/types";
+import { AuthUser, Role } from "@/types";
 
-// ── School-wide mock data ────────────────────────────────────────────────────
+// â”€â”€ School-wide mock data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const RECENT_ADMISSIONS = [
   { id: "1",  name: "Riya Sharma",      class: "Grade 6-A",  date: "2026-06-15", status: "enrolled",  admNo: "2026-0061" },
@@ -72,27 +72,27 @@ const GRADE_ATTENDANCE = [
 ];
 
 const TRANSPORT_ROUTES = [
-  { id: "1", name: "Route A – North Zone", vehicle: "MH-12 AB 1234", driver: "Raju Verma",    students: 42, status: "on_route" },
-  { id: "2", name: "Route B – South Zone", vehicle: "MH-12 CD 5678", driver: "Vijay Kumar",   students: 38, status: "arrived"  },
-  { id: "3", name: "Route C – East Zone",  vehicle: "MH-12 EF 9012", driver: "Ramesh Singh",  students: 35, status: "on_route" },
-  { id: "4", name: "Route D – West Zone",  vehicle: "MH-12 GH 3456", driver: "Anthony Joseph",students: 28, status: "delayed"  },
-  { id: "5", name: "Route E – City Core",  vehicle: "MH-12 IJ 7890", driver: "Suresh Das",    students: 31, status: "arrived"  },
+  { id: "1", name: "Route A â€“ North Zone", vehicle: "MH-12 AB 1234", driver: "Raju Verma",    students: 42, status: "on_route" },
+  { id: "2", name: "Route B â€“ South Zone", vehicle: "MH-12 CD 5678", driver: "Vijay Kumar",   students: 38, status: "arrived"  },
+  { id: "3", name: "Route C â€“ East Zone",  vehicle: "MH-12 EF 9012", driver: "Ramesh Singh",  students: 35, status: "on_route" },
+  { id: "4", name: "Route D â€“ West Zone",  vehicle: "MH-12 GH 3456", driver: "Anthony Joseph",students: 28, status: "delayed"  },
+  { id: "5", name: "Route E â€“ City Core",  vehicle: "MH-12 IJ 7890", driver: "Suresh Das",    students: 31, status: "arrived"  },
 ];
 
 const ANNOUNCEMENTS_RECENT = [
-  { id: "1", title: "Annual Sports Day – 15 August 2026",              audience: "school",   date: "2026-06-18" },
+  { id: "1", title: "Annual Sports Day â€“ 15 August 2026",              audience: "school",   date: "2026-06-18" },
   { id: "2", title: "Grade 10 & 12: Board Exam Schedule Released",      audience: "students", date: "2026-06-17" },
-  { id: "3", title: "Term 1 Final Exams: 20–28 July 2026",              audience: "school",   date: "2026-06-15" },
-  { id: "4", title: "Parent-Teacher Meeting – 5 July 2026",             audience: "parents",  date: "2026-06-14" },
+  { id: "3", title: "Term 1 Final Exams: 20â€“28 July 2026",              audience: "school",   date: "2026-06-15" },
+  { id: "4", title: "Parent-Teacher Meeting â€“ 5 July 2026",             audience: "parents",  date: "2026-06-14" },
   { id: "5", title: "Fee Reminder: Q2 Due by 30 June 2026",             audience: "parents",  date: "2026-06-12" },
 ];
 
 const LIBRARY_BOOKS = [
   { id: "1", title: "Mathematics Grade 8 NCERT",  category: "Textbook",  available: 12, total: 20, status: "available" },
-  { id: "2", title: "Wings of Fire – APJ Kalam",  category: "Biography", available: 3,  total: 8,  status: "low"       },
+  { id: "2", title: "Wings of Fire â€“ APJ Kalam",  category: "Biography", available: 3,  total: 8,  status: "low"       },
   { id: "3", title: "Science Grade 10 NCERT",     category: "Textbook",  available: 0,  total: 25, status: "out"       },
   { id: "4", title: "Rich Dad Poor Dad",           category: "Finance",   available: 5,  total: 6,  status: "available" },
-  { id: "5", title: "History of India – Class 12", category: "Textbook",  available: 8,  total: 15, status: "available" },
+  { id: "5", title: "History of India â€“ Class 12", category: "Textbook",  available: 8,  total: 15, status: "available" },
   { id: "6", title: "English Literature Grade 11", category: "Textbook",  available: 2,  total: 12, status: "low"       },
 ];
 
@@ -110,9 +110,9 @@ const HOSTEL_ROOMS = [
 
 const EXAMS_UPCOMING = [
   { id: "1", exam: "Term 1 Finals",     grades: "All Grades",     startDate: "2026-07-20", endDate: "2026-07-28", status: "upcoming" },
-  { id: "2", exam: "Unit Test 3",       grades: "Grade 6–10",     startDate: "2026-07-05", endDate: "2026-07-06", status: "upcoming" },
+  { id: "2", exam: "Unit Test 3",       grades: "Grade 6â€“10",     startDate: "2026-07-05", endDate: "2026-07-06", status: "upcoming" },
   { id: "3", exam: "Board Mock Exam",   grades: "Grade 10 & 12",  startDate: "2026-06-25", endDate: "2026-06-27", status: "ongoing"  },
-  { id: "4", exam: "Unit Test 2",       grades: "Grade 1–5",      startDate: "2026-06-10", endDate: "2026-06-11", status: "completed"},
+  { id: "4", exam: "Unit Test 2",       grades: "Grade 1â€“5",      startDate: "2026-06-10", endDate: "2026-06-11", status: "completed"},
 ];
 
 const ADMISSION_STATUS: Record<string, string> = {
@@ -158,7 +158,7 @@ const ROLE_TITLES: Partial<Record<Role, string>> = {
 
 interface Overview { totalStudents: number; presentToday: number; pendingFees: number; activeAnnouncements: number; totalStaff: number; totalCourses: number }
 
-// ── Main component ──────────────────────────────────────────────────────────
+// â”€â”€ Main component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function AdminDashboard({ user }: { user: AuthUser }) {
   const [mounted, setMounted] = useState(false);
@@ -224,7 +224,7 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
           <p className="text-text-500 text-sm mt-1">Welcome back, <span className="font-medium text-text-700">{user.displayName}</span></p>
         </div>
         <div className="flex gap-2">
-          <Link href="/announcements/new" className="px-3 py-2 text-sm border border-border rounded-lg bg-white hover:bg-surface-50">📢 Announce</Link>
+          <Link href="/announcements/new" className="px-3 py-2 text-sm border border-border rounded-lg bg-white hover:bg-surface-50">ðŸ“¢ Announce</Link>
           <Link href="/students" className="px-4 py-2 bg-spira-700 text-white text-sm font-medium rounded-lg hover:bg-spira-800">+ Add Student</Link>
         </div>
       </div>
@@ -234,7 +234,7 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
         <Link href="/students" className="bg-gradient-to-br from-spira-600 to-spira-800 rounded-xl p-4 text-white shadow-sm hover:shadow-md hover:brightness-110 transition-all">
           <p className="text-spira-200 text-xs font-medium uppercase tracking-wide mb-1">Total Students</p>
           <p className="text-3xl font-bold">{totalStudents.toLocaleString()}</p>
-          <p className="text-spira-200 text-xs mt-1">Grades 1–12 · 36 sections</p>
+          <p className="text-spira-200 text-xs mt-1">Grades 1â€“12 Â· 36 sections</p>
         </Link>
         <Link href="/attendance" className="bg-gradient-to-br from-green-500 to-green-700 rounded-xl p-4 text-white shadow-sm hover:shadow-md hover:brightness-110 transition-all">
           <p className="text-green-100 text-xs font-medium uppercase tracking-wide mb-1">Present Today</p>
@@ -263,7 +263,7 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
         ))}
       </div>
 
-      {/* ── OVERVIEW ── */}
+      {/* â”€â”€ OVERVIEW â”€â”€ */}
       {activeTab === "overview" && (
         <div className="grid lg:grid-cols-3 gap-5">
           <div className="lg:col-span-2 space-y-5">
@@ -288,7 +288,7 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
               </div>
               <div className="flex items-center gap-4 mt-3">
                 <span className="flex items-center gap-1 text-xs text-text-400"><span className="w-3 h-3 rounded-sm bg-green-500 inline-block"/>&gt;92%</span>
-                <span className="flex items-center gap-1 text-xs text-text-400"><span className="w-3 h-3 rounded-sm bg-indigo-500 inline-block"/>82–91%</span>
+                <span className="flex items-center gap-1 text-xs text-text-400"><span className="w-3 h-3 rounded-sm bg-indigo-500 inline-block"/>82â€“91%</span>
                 <span className="flex items-center gap-1 text-xs text-text-400"><span className="w-3 h-3 rounded-sm bg-amber-400 inline-block"/>&lt;82%</span>
               </div>
             </div>
@@ -297,7 +297,7 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
             <div className="bg-white rounded-2xl border border-border overflow-hidden">
               <div className="flex items-center justify-between px-5 py-4 border-b border-surface-100">
                 <h2 className="text-sm font-semibold text-text-900">Recent Admissions</h2>
-                <Link href="/students" className="text-xs text-spira-700 hover:underline">View all →</Link>
+                <Link href="/students" className="text-xs text-spira-700 hover:underline">View all â†’</Link>
               </div>
               <table className="w-full text-sm">
                 <thead className="bg-surface-50">
@@ -329,9 +329,9 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
             {/* Fee collection */}
             <div className="bg-white rounded-2xl border border-border p-5">
               <h2 className="text-sm font-semibold text-text-900 mb-1">Fee Collection</h2>
-              <p className="text-xs text-text-400 mb-3">2025–26 Academic Year</p>
-              <p className="text-3xl font-black text-text-900">₹{(totalFeeCollected / 10_00_000).toFixed(1)}Cr</p>
-              <p className="text-xs text-text-400 mb-2">of ₹{(totalFeeTarget / 10_00_000).toFixed(1)}Cr target</p>
+              <p className="text-xs text-text-400 mb-3">2025â€“26 Academic Year</p>
+              <p className="text-3xl font-black text-text-900">â‚¹{(totalFeeCollected / 10_00_000).toFixed(1)}Cr</p>
+              <p className="text-xs text-text-400 mb-2">of â‚¹{(totalFeeTarget / 10_00_000).toFixed(1)}Cr target</p>
               <div className="bg-surface-100 rounded-full h-3 mb-1">
                 <div className="bg-spira-600 rounded-full h-3 transition-all" style={{ width: `${feeCollectionPct}%` }} />
               </div>
@@ -355,15 +355,15 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
             {/* Transport */}
             <div className="bg-white rounded-2xl border border-border p-5">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold text-text-900">🚌 Transport</h2>
-                <Link href="/transport" className="text-xs text-spira-700 hover:underline">All →</Link>
+                <h2 className="text-sm font-semibold text-text-900">ðŸšŒ Transport</h2>
+                <Link href="/transport" className="text-xs text-spira-700 hover:underline">All â†’</Link>
               </div>
               <div className="space-y-2">
                 {TRANSPORT_ROUTES.slice(0, 3).map((r) => (
                   <div key={r.id} className="flex items-center gap-2 p-2.5 rounded-lg border border-surface-100">
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium text-text-900 truncate">{r.name}</p>
-                      <p className="text-[11px] text-text-400">{r.vehicle} · {r.students} students</p>
+                      <p className="text-[11px] text-text-400">{r.vehicle} Â· {r.students} students</p>
                     </div>
                     <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium shrink-0 ${TRANSPORT_STATUS[r.status] ?? ""}`}>
                       {r.status === "on_route" ? "On Route" : r.status === "arrived" ? "Arrived" : "Delayed"}
@@ -377,7 +377,7 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
             <div className="bg-white rounded-2xl border border-border p-5">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-sm font-semibold text-text-900">Announcements</h2>
-                <Link href="/announcements" className="text-xs text-spira-700 hover:underline">All →</Link>
+                <Link href="/announcements" className="text-xs text-spira-700 hover:underline">All â†’</Link>
               </div>
               <div className="space-y-2">
                 {ANNOUNCEMENTS_RECENT.slice(0, 4).map((a) => (
@@ -395,12 +395,12 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
         </div>
       )}
 
-      {/* ── STUDENTS ── */}
+      {/* â”€â”€ STUDENTS â”€â”€ */}
       {activeTab === "students" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex gap-3 flex-wrap">
-              <input placeholder="Search students…" className="px-3 py-2 text-sm border border-border rounded-lg w-52 focus:outline-none focus:ring-2 focus:ring-spira-500" />
+              <input placeholder="Search studentsâ€¦" className="px-3 py-2 text-sm border border-border rounded-lg w-52 focus:outline-none focus:ring-2 focus:ring-spira-500" />
               <select value={gradeFilter} onChange={(e) => setGradeFilter(e.target.value)} className="px-3 py-2 text-sm border border-border rounded-lg bg-white">
                 <option value="All">All Grades</option>
                 {[1,2,3,4,5,6,7,8,9,10,11,12].map((g) => <option key={g} value={`Grade ${g}`}>Grade {g}</option>)}
@@ -460,12 +460,12 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
         </div>
       )}
 
-      {/* ── STAFF ── */}
+      {/* â”€â”€ STAFF â”€â”€ */}
       {activeTab === "staff" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-3">
-            <input placeholder="Search staff…" className="px-3 py-2 text-sm border border-border rounded-lg w-60 focus:outline-none focus:ring-2 focus:ring-spira-500" />
-            <Link href="/staff" className="px-4 py-2 bg-spira-700 text-white text-sm font-medium rounded-lg hover:bg-spira-800">Manage Staff →</Link>
+            <input placeholder="Search staffâ€¦" className="px-3 py-2 text-sm border border-border rounded-lg w-60 focus:outline-none focus:ring-2 focus:ring-spira-500" />
+            <Link href="/staff" className="px-4 py-2 bg-spira-700 text-white text-sm font-medium rounded-lg hover:bg-spira-800">Manage Staff â†’</Link>
           </div>
           <div className="bg-white rounded-2xl border border-border overflow-hidden">
             <table className="w-full text-sm">
@@ -500,18 +500,18 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-text-400">Showing 10 of {totalStaff} staff members. <Link href="/staff" className="text-spira-700 hover:underline">View all →</Link></p>
+          <p className="text-xs text-text-400">Showing 10 of {totalStaff} staff members. <Link href="/staff" className="text-spira-700 hover:underline">View all â†’</Link></p>
         </div>
       )}
 
-      {/* ── FEES ── */}
+      {/* â”€â”€ FEES â”€â”€ */}
       {activeTab === "fees" && (
         <div className="space-y-5">
           <div className="grid sm:grid-cols-3 gap-4">
             {[
-              { label: "Total Collected", value: `₹${(totalFeeCollected / 10_00_000).toFixed(2)}Cr`, sub: `${feeCollectionPct}% of annual target`, color: "from-green-500 to-green-700" },
-              { label: "Pending Amount",  value: "₹28.4L",   sub: "from 186 unpaid invoices",                                                        color: "from-red-500 to-red-700"   },
-              { label: "This Month",      value: "₹12.7L",   sub: "57.7% of monthly target",                                                          color: "from-blue-500 to-blue-700" },
+              { label: "Total Collected", value: `â‚¹${(totalFeeCollected / 10_00_000).toFixed(2)}Cr`, sub: `${feeCollectionPct}% of annual target`, color: "from-green-500 to-green-700" },
+              { label: "Pending Amount",  value: "â‚¹28.4L",   sub: "from 186 unpaid invoices",                                                        color: "from-red-500 to-red-700"   },
+              { label: "This Month",      value: "â‚¹12.7L",   sub: "57.7% of monthly target",                                                          color: "from-blue-500 to-blue-700" },
             ].map((s) => (
               <div key={s.label} className={`bg-gradient-to-br ${s.color} rounded-xl p-4 text-white`}>
                 <p className="text-white/70 text-xs uppercase tracking-wide">{s.label}</p>
@@ -521,13 +521,13 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
             ))}
           </div>
           <div className="bg-white rounded-2xl border border-border p-5">
-            <h2 className="text-sm font-semibold text-text-900 mb-4">Monthly Fee Collection (2025–26)</h2>
+            <h2 className="text-sm font-semibold text-text-900 mb-4">Monthly Fee Collection (2025â€“26)</h2>
             <div className="flex items-end gap-3 h-36">
               {FEE_COLLECTION.map((m) => {
                 const pct = m.collected / m.target;
                 return (
                   <div key={m.month} className="flex-1 flex flex-col items-center gap-1">
-                    <span className="text-[10px] font-bold text-text-700">₹{(m.collected / 100000).toFixed(1)}L</span>
+                    <span className="text-[10px] font-bold text-text-700">â‚¹{(m.collected / 100000).toFixed(1)}L</span>
                     <div className="w-full flex items-end" style={{ height: 110 }}>
                       <div className="w-full rounded-t-md" style={{ height: `${pct * 100}%`, backgroundColor: pct >= 0.9 ? "#22c55e" : pct >= 0.7 ? "#6366f1" : "#f59e0b" }} />
                     </div>
@@ -538,14 +538,14 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
             </div>
           </div>
           <div className="flex justify-end gap-2">
-            <button onClick={() => showToast("Exporting fee report…")} className="px-4 py-2 border border-border text-sm rounded-lg hover:bg-surface-50">↓ Export</button>
+            <button onClick={() => showToast("Exporting fee reportâ€¦")} className="px-4 py-2 border border-border text-sm rounded-lg hover:bg-surface-50">â†“ Export</button>
             <Link href="/fees" className="px-4 py-2 border border-border text-sm rounded-lg hover:bg-surface-50">View All Invoices</Link>
             <button onClick={() => showToast("Generate Invoice form coming soon")} className="px-4 py-2 bg-spira-700 text-white text-sm rounded-lg hover:bg-spira-800">Generate Invoice</button>
           </div>
         </div>
       )}
 
-      {/* ── ATTENDANCE ── */}
+      {/* â”€â”€ ATTENDANCE â”€â”€ */}
       {activeTab === "attendance" && (
         <div className="space-y-5">
           <div className="grid sm:grid-cols-4 gap-4">
@@ -600,17 +600,17 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
             </div>
           </div>
           <div className="flex justify-end">
-            <Link href="/attendance" className="px-4 py-2 bg-spira-700 text-white text-sm rounded-lg hover:bg-spira-800">Full Attendance →</Link>
+            <Link href="/attendance" className="px-4 py-2 bg-spira-700 text-white text-sm rounded-lg hover:bg-spira-800">Full Attendance â†’</Link>
           </div>
         </div>
       )}
 
-      {/* ── EXAMS ── */}
+      {/* â”€â”€ EXAMS â”€â”€ */}
       {activeTab === "exams" && (
         <div className="space-y-5">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h2 className="text-sm font-semibold text-text-900">Exam Schedule – 2025–26</h2>
+              <h2 className="text-sm font-semibold text-text-900">Exam Schedule â€“ 2025â€“26</h2>
               <p className="text-xs text-text-400 mt-0.5">All grades and sections</p>
             </div>
             <button onClick={() => showToast("Create Exam form coming soon")} className="px-4 py-2 bg-spira-700 text-white text-sm font-medium rounded-lg hover:bg-spira-800">+ Schedule Exam</button>
@@ -644,12 +644,12 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
             </table>
           </div>
           <div className="flex justify-end">
-            <Link href="/exams" className="px-4 py-2 border border-border text-sm rounded-lg hover:bg-surface-50">View Full Exam Dashboard →</Link>
+            <Link href="/exams" className="px-4 py-2 border border-border text-sm rounded-lg hover:bg-surface-50">View Full Exam Dashboard â†’</Link>
           </div>
         </div>
       )}
 
-      {/* ── TRANSPORT ── */}
+      {/* â”€â”€ TRANSPORT â”€â”€ */}
       {activeTab === "transport" && (
         <div className="space-y-4">
           <div className="grid sm:grid-cols-4 gap-4">
@@ -669,7 +669,7 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
           <div className="bg-white rounded-2xl border border-border overflow-hidden">
             <div className="flex items-center justify-between px-5 py-4 border-b border-surface-100">
               <h2 className="text-sm font-semibold text-text-900">All Routes</h2>
-              <Link href="/transport" className="text-xs text-spira-700 hover:underline">Manage →</Link>
+              <Link href="/transport" className="text-xs text-spira-700 hover:underline">Manage â†’</Link>
             </div>
             <table className="w-full text-sm">
               <thead className="bg-surface-50">
@@ -697,7 +697,7 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
         </div>
       )}
 
-      {/* ── LIBRARY ── */}
+      {/* â”€â”€ LIBRARY â”€â”€ */}
       {activeTab === "library" && (
         <div className="space-y-4">
           <div className="grid sm:grid-cols-3 gap-4">
@@ -737,7 +737,7 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
         </div>
       )}
 
-      {/* ── HOSTEL ── */}
+      {/* â”€â”€ HOSTEL â”€â”€ */}
       {activeTab === "hostel" && (
         <div className="space-y-5">
           <div className="grid sm:grid-cols-2 gap-4">
@@ -789,7 +789,7 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
         </div>
       )}
 
-      {/* ── COMMUNICATION ── */}
+      {/* â”€â”€ COMMUNICATION â”€â”€ */}
       {activeTab === "communication" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-3">
@@ -815,12 +815,12 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
           <div className="bg-white rounded-2xl border border-border overflow-hidden">
             <div className="flex items-center justify-between px-5 py-4 border-b border-surface-100">
               <h2 className="text-sm font-semibold text-text-900">Recent Announcements</h2>
-              <Link href="/announcements" className="text-xs text-spira-700 hover:underline">All →</Link>
+              <Link href="/announcements" className="text-xs text-spira-700 hover:underline">All â†’</Link>
             </div>
             <div className="divide-y divide-surface-100">
               {ANNOUNCEMENTS_RECENT.map((a) => (
                 <Link key={a.id} href={`/announcements/${a.id}`} className="flex items-center gap-4 px-5 py-4 hover:bg-surface-50">
-                  <div className="w-10 h-10 rounded-full bg-spira-100 text-spira-700 flex items-center justify-center text-lg shrink-0">📢</div>
+                  <div className="w-10 h-10 rounded-full bg-spira-100 text-spira-700 flex items-center justify-center text-lg shrink-0">ðŸ“¢</div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-text-900 truncate">{a.title}</p>
                     <div className="flex items-center gap-2 mt-0.5">
@@ -828,7 +828,7 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
                       <span className="text-xs px-1.5 py-0.5 bg-surface-100 text-text-500 rounded capitalize">{a.audience}</span>
                     </div>
                   </div>
-                  <span className="text-xs text-text-400 shrink-0">→</span>
+                  <span className="text-xs text-text-400 shrink-0">â†’</span>
                 </Link>
               ))}
             </div>
@@ -836,26 +836,26 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
         </div>
       )}
 
-      {/* ── REPORTS ── */}
+      {/* â”€â”€ REPORTS â”€â”€ */}
       {activeTab === "reports" && (
         <div className="space-y-4">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { title: "Attendance Report",      desc: "Grade-wise and class-wise daily/weekly/monthly attendance",   icon: "📋", href: "/attendance" },
-              { title: "Fee Collection Report",  desc: "Invoice-wise, grade-wise, and month-wise fee analytics",       icon: "💰", href: "/fees"       },
-              { title: "Exam Results Report",    desc: "Subject-wise marks, grade distribution, pass/fail analysis",  icon: "📊", href: "/exams"      },
-              { title: "Student Progress",       desc: "Individual student academic performance across terms",         icon: "🎓", href: "/students"   },
-              { title: "Transport Report",       desc: "Route usage, driver performance, fuel logs, on-time rate",    icon: "🚌", href: "/transport"  },
-              { title: "Analytics Dashboard",   desc: "School-wide KPIs, trends, and comparative analysis",          icon: "📈", href: "/analytics"  },
-              { title: "Staff Report",           desc: "Attendance, leaves, payroll, and performance overview",       icon: "👨‍🏫", href: "/staff"      },
-              { title: "Library Report",         desc: "Issue/return history, overdue books, catalog utilization",    icon: "📚", href: "/documents"  },
-              { title: "Hostel Report",          desc: "Occupancy rates, room allocations, warden logs",              icon: "🏠", href: "/documents"  },
+              { title: "Attendance Report",      desc: "Grade-wise and class-wise daily/weekly/monthly attendance",   icon: "ðŸ“‹", href: "/attendance" },
+              { title: "Fee Collection Report",  desc: "Invoice-wise, grade-wise, and month-wise fee analytics",       icon: "ðŸ’°", href: "/fees"       },
+              { title: "Exam Results Report",    desc: "Subject-wise marks, grade distribution, pass/fail analysis",  icon: "ðŸ“Š", href: "/exams"      },
+              { title: "Student Progress",       desc: "Individual student academic performance across terms",         icon: "ðŸŽ“", href: "/students"   },
+              { title: "Transport Report",       desc: "Route usage, driver performance, fuel logs, on-time rate",    icon: "ðŸšŒ", href: "/transport"  },
+              { title: "Analytics Dashboard",   desc: "School-wide KPIs, trends, and comparative analysis",          icon: "ðŸ“ˆ", href: "/analytics"  },
+              { title: "Staff Report",           desc: "Attendance, leaves, payroll, and performance overview",       icon: "ðŸ‘¨â€ðŸ«", href: "/staff"      },
+              { title: "Library Report",         desc: "Issue/return history, overdue books, catalog utilization",    icon: "ðŸ“š", href: "/documents"  },
+              { title: "Hostel Report",          desc: "Occupancy rates, room allocations, warden logs",              icon: "ðŸ ", href: "/documents"  },
             ].map((r) => (
               <Link key={r.title} href={r.href} className="bg-white rounded-2xl border border-border p-5 hover:border-spira-400 hover:shadow-md transition-all group">
                 <div className="text-3xl mb-3">{r.icon}</div>
                 <p className="font-semibold text-text-900 group-hover:text-spira-700 transition-colors">{r.title}</p>
                 <p className="text-xs text-text-400 mt-1 leading-relaxed">{r.desc}</p>
-                <p className="text-xs text-spira-700 mt-3 font-medium">View Report →</p>
+                <p className="text-xs text-spira-700 mt-3 font-medium">View Report â†’</p>
               </Link>
             ))}
           </div>
@@ -902,7 +902,7 @@ export function AdminDashboard({ user }: { user: AuthUser }) {
               <div className="w-12 h-12 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-lg font-bold">{staffModal.name.split(" ").map(n => n[0]).join("").slice(0,2)}</div>
               <div>
                 <p className="font-semibold text-text-900 text-lg">{staffModal.name}</p>
-                <p className="text-xs text-text-400">{staffModal.role} · {staffModal.dept}</p>
+                <p className="text-xs text-text-400">{staffModal.role} Â· {staffModal.dept}</p>
               </div>
             </div>
             <div className="space-y-2 text-sm">

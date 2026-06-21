@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
-import { AuthUser } from "@spira/types";
+import { AuthUser } from "@/types";
 
 interface TransportAssignment {
   pickupLocation: string;
@@ -127,7 +127,7 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
       <div>
         <h1 className="text-xl md:text-2xl font-semibold text-text-900">My Dashboard</h1>
         <p className="text-text-500 text-sm mt-1">
-          Welcome back, <span className="font-medium text-text-700">{user.displayName}</span> · {DAY_NAMES[todayDow]}
+          Welcome back, <span className="font-medium text-text-700">{user.displayName}</span> Â· {DAY_NAMES[todayDow]}
         </p>
       </div>
 
@@ -140,12 +140,12 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
         </Link>
         <Link href="/attendance" className="bg-gradient-to-br from-green-500 to-green-700 rounded-xl p-4 text-white shadow-sm hover:shadow-md hover:brightness-110 transition-all">
           <p className="text-green-100 text-xs font-medium uppercase tracking-wide mb-1">Attendance</p>
-          <p className="text-3xl font-bold">{attendancePct !== null ? `${attendancePct}%` : "—"}</p>
+          <p className="text-3xl font-bold">{attendancePct !== null ? `${attendancePct}%` : "â€”"}</p>
           <p className="text-green-100 text-xs mt-1">last 30 days</p>
         </Link>
         <Link href="/assignments" className="bg-gradient-to-br from-orange-500 to-orange-700 rounded-xl p-4 text-white shadow-sm hover:shadow-md hover:brightness-110 transition-all">
           <p className="text-orange-100 text-xs font-medium uppercase tracking-wide mb-1">Assignments</p>
-          <p className="text-3xl font-bold">{assignments?.total ?? "—"}</p>
+          <p className="text-3xl font-bold">{assignments?.total ?? "â€”"}</p>
           <p className="text-orange-100 text-xs mt-1">total</p>
         </Link>
         <Link href="/fees" className={`rounded-xl p-4 text-white shadow-sm hover:shadow-md hover:brightness-110 transition-all ${pendingInvoices.length > 0 ? "bg-gradient-to-br from-red-500 to-red-700" : "bg-gradient-to-br from-emerald-500 to-emerald-700"}`}>
@@ -161,7 +161,7 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
           <div className="bg-white rounded-lg border border-border p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-semibold text-text-900">Today&apos;s Timetable</h2>
-              <Link href="/timetable" className="text-xs text-spira-700 hover:underline">View full →</Link>
+              <Link href="/timetable" className="text-xs text-spira-700 hover:underline">View full â†’</Link>
             </div>
             {todaySlots.length === 0 ? (
               <p className="text-sm text-text-500">No classes today.</p>
@@ -169,7 +169,7 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
               <div className="space-y-2">
                 {todaySlots.map((slot) => (
                   <div key={slot.id} className="flex items-center gap-3 p-3 rounded-md bg-surface-50 border border-surface-100">
-                    <div className="text-xs text-text-400 w-20 shrink-0">{slot.startTime} – {slot.endTime}</div>
+                    <div className="text-xs text-text-400 w-20 shrink-0">{slot.startTime} â€“ {slot.endTime}</div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-text-900 truncate">{slot.courseOffering.course.name}</p>
                     </div>
@@ -183,7 +183,7 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
           <div className="bg-white rounded-lg border border-border p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-semibold text-text-900">My Assignments</h2>
-              <Link href="/assignments" className="text-xs text-spira-700 hover:underline">View all →</Link>
+              <Link href="/assignments" className="text-xs text-spira-700 hover:underline">View all â†’</Link>
             </div>
             {(assignments?.data ?? []).length === 0 ? (
               <p className="text-sm text-text-500">No assignments.</p>
@@ -207,7 +207,7 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
             <div className="bg-white rounded-lg border border-border p-5">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-sm font-semibold text-text-900">Fee Status</h2>
-                <Link href="/fees" className="text-xs text-spira-700 hover:underline">View all →</Link>
+                <Link href="/fees" className="text-xs text-spira-700 hover:underline">View all â†’</Link>
               </div>
               <div className="space-y-2">
                 {pendingInvoices.slice(0, 3).map((inv) => (
@@ -234,7 +234,7 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
           {/* AI Assistant shortcut */}
           <Link href="/assistant" className="block bg-gradient-to-br from-violet-500 to-violet-700 rounded-xl p-4 text-white shadow-sm hover:shadow-md transition-all">
             <div className="flex items-center gap-3">
-              <span className="text-2xl">💬</span>
+              <span className="text-2xl">ðŸ’¬</span>
               <div>
                 <p className="font-semibold text-sm">AI Study Assistant</p>
                 <p className="text-violet-200 text-xs mt-0.5">Ask about assignments, fees & exams</p>
@@ -246,7 +246,7 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
           {myRoute && (
             <Link href="/transport" className="block bg-white rounded-xl border border-border p-4 hover:border-spira-400 transition-all">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-semibold text-text-900">🚌 My Bus</p>
+                <p className="text-sm font-semibold text-text-900">ðŸšŒ My Bus</p>
                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                   myRoute.route.status === "on_route" ? "bg-blue-100 text-blue-700" :
                   myRoute.route.status === "arrived" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
@@ -255,7 +255,7 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
                 </span>
               </div>
               <p className="text-xs text-text-700">{myRoute.route.routeName}</p>
-              <p className="text-xs text-text-400 mt-0.5">{myRoute.pickupLocation} {myRoute.pickupEta ? `· ETA ${myRoute.pickupEta}` : ""}</p>
+              <p className="text-xs text-text-400 mt-0.5">{myRoute.pickupLocation} {myRoute.pickupEta ? `Â· ETA ${myRoute.pickupEta}` : ""}</p>
             </Link>
           )}
 
@@ -263,7 +263,7 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
           {nextOnlineClass && (
             <Link href={`/online-classes/${nextOnlineClass.id}`} className="block bg-white rounded-xl border border-border p-4 hover:border-spira-400 transition-all">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-semibold text-text-900">🎥 Next Online Class</p>
+                <p className="text-sm font-semibold text-text-900">ðŸŽ¥ Next Online Class</p>
                 <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 capitalize">{nextOnlineClass.status}</span>
               </div>
               <p className="text-xs text-text-700 truncate">{nextOnlineClass.title}</p>
@@ -278,19 +278,19 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
             <h2 className="text-sm font-semibold text-text-900 mb-4">Quick Actions</h2>
             <div className="space-y-1">
               <Link href="/assignments" className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-text-700 hover:bg-surface-50 rounded-md transition-colors">
-                <span>📝</span> Submit Assignment
+                <span>ðŸ“</span> Submit Assignment
               </Link>
               <Link href="/exams" className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-text-700 hover:bg-surface-50 rounded-md transition-colors">
-                <span>📊</span> View My Results
+                <span>ðŸ“Š</span> View My Results
               </Link>
               <Link href="/fees" className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-text-700 hover:bg-surface-50 rounded-md transition-colors">
-                <span>💰</span> My Fee Invoices
+                <span>ðŸ’°</span> My Fee Invoices
               </Link>
               <Link href="/online-classes" className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-text-700 hover:bg-surface-50 rounded-md transition-colors">
-                <span>🎥</span> Online Classes
+                <span>ðŸŽ¥</span> Online Classes
               </Link>
               <Link href="/documents" className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-text-700 hover:bg-surface-50 rounded-md transition-colors">
-                <span>📄</span> Documents
+                <span>ðŸ“„</span> Documents
               </Link>
             </div>
           </div>
@@ -299,7 +299,7 @@ export function StudentDashboard({ user }: { user: AuthUser }) {
           <div className="bg-white rounded-lg border border-border p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-semibold text-text-900">My Results</h2>
-              <Link href="/exams" className="text-xs text-spira-700 hover:underline">View all →</Link>
+              <Link href="/exams" className="text-xs text-spira-700 hover:underline">View all â†’</Link>
             </div>
             {(exams?.data ?? []).length === 0 ? (
               <p className="text-sm text-text-500">No results yet.</p>

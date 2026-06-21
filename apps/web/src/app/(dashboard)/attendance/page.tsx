@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@spira/types";
+import { Role } from "@/types";
 import { canCreate } from "@/lib/permissions";
 
 interface AttendanceSession {
@@ -81,12 +81,12 @@ export default function AttendancePage() {
                   </div>
                   <p className="text-sm text-text-500 mt-1">
                     {new Date(s.sessionDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })}
-                    {" · "}Period {s.periodNumber}
+                    {" Â· "}Period {s.periodNumber}
                   </p>
-                  <p className="text-xs text-text-400 mt-0.5">{s.teacher?.user.displayName ?? "—"} · {s._count.records} records</p>
+                  <p className="text-xs text-text-400 mt-0.5">{s.teacher?.user.displayName ?? "â€”"} Â· {s._count.records} records</p>
                 </div>
                 <Link href={`/attendance/${s.id}`} className="text-sm text-spira-700 font-medium ml-3 shrink-0">
-                  {canOpen && !s.submittedAt ? "Mark →" : "View →"}
+                  {canOpen && !s.submittedAt ? "Mark â†’" : "View â†’"}
                 </Link>
               </div>
             </div>
@@ -125,7 +125,7 @@ export default function AttendancePage() {
                       <td className="px-4 py-3 text-text-900">{new Date(s.sessionDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" })}</td>
                       <td className="px-4 py-3 font-medium text-text-900">{s.section.name}</td>
                       <td className="px-4 py-3 text-text-500">Period {s.periodNumber}</td>
-                      <td className="px-4 py-3 text-text-500">{s.teacher?.user.displayName ?? "—"}</td>
+                      <td className="px-4 py-3 text-text-500">{s.teacher?.user.displayName ?? "â€”"}</td>
                       <td className="px-4 py-3 text-text-500">{s._count.records}</td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${s.submittedAt ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}>

@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@spira/types";
+import { Role } from "@/types";
 import { NAV_ITEMS, ROLE_BOTTOM_TABS } from "@/lib/nav-items";
 import { cn } from "@/lib/utils";
 import { apiClient } from "@/lib/api-client";
@@ -81,7 +81,7 @@ export function MobileBottomNav() {
             )}
             aria-label="More navigation options"
           >
-            <span className="text-xl leading-none">⋯</span>
+            <span className="text-xl leading-none">â‹¯</span>
             <span className="text-[10px] font-medium">More</span>
           </button>
         </div>
@@ -145,7 +145,7 @@ export function MobileBottomNav() {
                   onClick={handleLogout}
                   className="w-full flex items-center gap-3 px-3 py-3 text-sm text-danger font-medium rounded-xl active:bg-surface-50 transition-colors"
                 >
-                  <span>🚪</span> Sign out
+                  <span>ðŸšª</span> Sign out
                 </button>
               </div>
             </div>

@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
-import { AuthUser } from "@spira/types";
+import { AuthUser } from "@/types";
 import { getAccessToken } from "@/lib/auth";
 
 export function useAuth() {

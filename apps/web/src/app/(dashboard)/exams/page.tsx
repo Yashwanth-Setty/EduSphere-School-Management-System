@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@spira/types";
+import { Role } from "@/types";
 import { canCreate } from "@/lib/permissions";
 
 interface Exam {
@@ -112,18 +112,18 @@ export default function ExamsPage() {
                   <p className="font-semibold text-text-900 truncate">{e.title}</p>
                   <p className="text-sm text-text-500 mt-0.5">
                     <span className="font-mono text-spira-700 text-xs">{e.courseOffering.course.code}</span>
-                    {" · "}{e.courseOffering.section.name}
+                    {" Â· "}{e.courseOffering.section.name}
                   </p>
                   <div className="flex items-center gap-2 mt-2 flex-wrap">
                     <span className="text-xs text-text-400 capitalize">{e.examType}</span>
-                    <span className="text-xs text-text-400">· {e.maxMarks} marks</span>
-                    {e.examDate && <span className="text-xs text-text-400">· {new Date(e.examDate).toLocaleDateString("en-IN", { timeZone: "UTC" })}</span>}
+                    <span className="text-xs text-text-400">Â· {e.maxMarks} marks</span>
+                    {e.examDate && <span className="text-xs text-text-400">Â· {new Date(e.examDate).toLocaleDateString("en-IN", { timeZone: "UTC" })}</span>}
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${e.isPublished ? "bg-success/10 text-success" : "bg-surface-100 text-text-500"}`}>
                       {e.isPublished ? "Published" : "Draft"}
                     </span>
                   </div>
                 </div>
-                <Link href={`/exams/${e.id}`} className="text-sm text-spira-700 font-medium shrink-0">View →</Link>
+                <Link href={`/exams/${e.id}`} className="text-sm text-spira-700 font-medium shrink-0">View â†’</Link>
               </div>
             </div>
           ))
@@ -164,7 +164,7 @@ export default function ExamsPage() {
                       <td className="px-4 py-3 text-text-500">{e.courseOffering.section.name}</td>
                       <td className="px-4 py-3 text-text-500 capitalize">{e.examType}</td>
                       <td className="px-4 py-3 text-text-500">{e.maxMarks}</td>
-                      <td className="px-4 py-3 text-text-500">{e.examDate ? new Date(e.examDate).toLocaleDateString("en-IN", { timeZone: "UTC" }) : "—"}</td>
+                      <td className="px-4 py-3 text-text-500">{e.examDate ? new Date(e.examDate).toLocaleDateString("en-IN", { timeZone: "UTC" }) : "â€”"}</td>
                       <td className="px-4 py-3 text-text-500">{e._count.results}</td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${e.isPublished ? "bg-success/10 text-success" : "bg-text-500/10 text-text-500"}`}>
@@ -206,7 +206,7 @@ function StudentDashboard({ exams, questionPapers, isLoading }: { exams: Exam[];
     <div className="p-4 md:p-6 space-y-5">
       <div>
         <h1 className="text-xl md:text-2xl font-semibold text-text-900">Exams & Results</h1>
-        <p className="text-text-500 text-sm mt-0.5">Term 1 · Academic Year 2025–26</p>
+        <p className="text-text-500 text-sm mt-0.5">Term 1 Â· Academic Year 2025â€“26</p>
       </div>
 
       {/* Overall score card */}
@@ -257,7 +257,7 @@ function StudentDashboard({ exams, questionPapers, isLoading }: { exams: Exam[];
       <div className="bg-white rounded-2xl border border-border p-5 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-sm font-semibold text-text-900">{sub.subject} — Assessment Breakdown</h2>
+            <h2 className="text-sm font-semibold text-text-900">{sub.subject} â€” Assessment Breakdown</h2>
             <p className="text-xs text-text-400 mt-0.5">Click a subject card above to switch</p>
           </div>
           <span className={`text-sm px-2.5 py-1 rounded-full font-bold ${GRADE_COLORS[sub.grade] ?? ""}`}>{sub.grade}</span>
@@ -283,7 +283,7 @@ function StudentDashboard({ exams, questionPapers, isLoading }: { exams: Exam[];
               <Link key={e.id} href={`/exams/${e.id}`} className="flex items-center justify-between bg-white border border-border rounded-xl p-4 hover:border-spira-400 hover:shadow-sm transition-all">
                 <div>
                   <p className="font-semibold text-text-900">{e.title}</p>
-                  <p className="text-xs text-text-500 mt-0.5">{e.courseOffering.course.name} · {e.maxMarks} marks</p>
+                  <p className="text-xs text-text-500 mt-0.5">{e.courseOffering.course.name} Â· {e.maxMarks} marks</p>
                 </div>
                 <div className="text-right shrink-0 ml-3">
                   {e.examDate && (
@@ -312,12 +312,12 @@ function StudentDashboard({ exams, questionPapers, isLoading }: { exams: Exam[];
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {questionPapers.map((doc) => (
               <Link key={doc.id} href={`/documents/${doc.id}`} className="flex items-center gap-3 bg-white border border-border rounded-xl p-4 hover:border-indigo-400 hover:shadow-sm transition-all group">
-                <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0 text-xl">📝</div>
+                <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center shrink-0 text-xl">ðŸ“</div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-text-900 truncate group-hover:text-indigo-700">{doc.title}</p>
                   <p className="text-xs text-text-400 mt-0.5 capitalize">{doc.category.replace("_", " ")}</p>
                 </div>
-                <span className="text-xs text-indigo-600 font-medium shrink-0">View →</span>
+                <span className="text-xs text-indigo-600 font-medium shrink-0">View â†’</span>
               </Link>
             ))}
           </div>

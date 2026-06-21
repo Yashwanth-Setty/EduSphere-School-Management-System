@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@spira/types";
+import { Role } from "@/types";
 import { canCreate } from "@/lib/permissions";
 
 interface Course {
@@ -52,7 +52,7 @@ export default function CoursesPage() {
         <div className="flex items-center gap-2 w-full md:w-auto">
           <input
             type="search"
-            placeholder="Search…"
+            placeholder="Searchâ€¦"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             aria-label="Search courses"
@@ -92,7 +92,7 @@ export default function CoursesPage() {
                   {c.description && <p className="text-xs text-text-500 mt-0.5 line-clamp-2">{c.description}</p>}
                   <p className="text-xs text-text-400 mt-1">{c._count.offerings} section{c._count.offerings !== 1 ? "s" : ""}</p>
                 </div>
-                <Link href={`/courses/${c.id}`} className="text-sm text-spira-700 font-medium shrink-0">View →</Link>
+                <Link href={`/courses/${c.id}`} className="text-sm text-spira-700 font-medium shrink-0">View â†’</Link>
               </div>
             </div>
           ))
@@ -128,7 +128,7 @@ export default function CoursesPage() {
                     <tr key={c.id} className="border-b border-surface-100 hover:bg-surface-50 transition-colors">
                       <td className="px-4 py-3 font-mono text-xs font-medium text-spira-800">{c.code}</td>
                       <td className="px-4 py-3 font-medium text-text-900">{c.name}</td>
-                      <td className="px-4 py-3 text-text-500 text-xs max-w-xs truncate">{c.description ?? "—"}</td>
+                      <td className="px-4 py-3 text-text-500 text-xs max-w-xs truncate">{c.description ?? "â€”"}</td>
                       <td className="px-4 py-3 text-text-500">{c._count.offerings} section{c._count.offerings !== 1 ? "s" : ""}</td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${c.isActive ? "bg-success/10 text-success" : "bg-text-500/10 text-text-500"}`}>
@@ -145,7 +145,7 @@ export default function CoursesPage() {
         </div>
         {data && data.totalPages > 1 && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-surface-100">
-            <p className="text-xs text-text-500">Page {data.page} of {data.totalPages} · {data.total} courses</p>
+            <p className="text-xs text-text-500">Page {data.page} of {data.totalPages} Â· {data.total} courses</p>
             <div className="flex gap-2">
               <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)} className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors">Previous</button>
               <button disabled={page >= data.totalPages} onClick={() => setPage((p) => p + 1)} className="px-3 py-1.5 text-xs border border-border rounded-md disabled:opacity-40 hover:bg-surface-50 transition-colors">Next</button>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@spira/types";
+import { Role } from "@/types";
 import { canCreate } from "@/lib/permissions";
 
 interface Doc {
@@ -32,15 +32,15 @@ const SCOPE_BADGE: Record<string, string> = {
 };
 
 const CAT_ICON: Record<string, string> = {
-  textbook:       "📚",
-  notes:          "📓",
-  question_paper: "📝",
-  circular:       "📢",
-  report_card:    "🏅",
-  policy:         "📋",
-  finance:        "💰",
-  counselor:      "🧠",
-  general:        "📄",
+  textbook:       "ðŸ“š",
+  notes:          "ðŸ““",
+  question_paper: "ðŸ“",
+  circular:       "ðŸ“¢",
+  report_card:    "ðŸ…",
+  policy:         "ðŸ“‹",
+  finance:        "ðŸ’°",
+  counselor:      "ðŸ§ ",
+  general:        "ðŸ“„",
 };
 
 function fmtBytes(b: number) {
@@ -87,14 +87,14 @@ export default function DocumentsPage() {
       {/* Category filter pills */}
       <div className="flex gap-2 overflow-x-auto pb-1">
         {[
-          { value: "",               label: "All",           icon: "📁" },
-          { value: "textbook",       label: "Textbooks",     icon: "📚" },
-          { value: "notes",          label: "Notes",         icon: "📓" },
-          { value: "question_paper", label: "Question Papers",icon: "📝" },
-          { value: "circular",       label: "Circulars",     icon: "📢" },
-          { value: "report_card",    label: "Report Cards",  icon: "🏅" },
-          { value: "policy",         label: "Policies",      icon: "📋" },
-          { value: "general",        label: "General",       icon: "📄" },
+          { value: "",               label: "All",           icon: "ðŸ“" },
+          { value: "textbook",       label: "Textbooks",     icon: "ðŸ“š" },
+          { value: "notes",          label: "Notes",         icon: "ðŸ““" },
+          { value: "question_paper", label: "Question Papers",icon: "ðŸ“" },
+          { value: "circular",       label: "Circulars",     icon: "ðŸ“¢" },
+          { value: "report_card",    label: "Report Cards",  icon: "ðŸ…" },
+          { value: "policy",         label: "Policies",      icon: "ðŸ“‹" },
+          { value: "general",        label: "General",       icon: "ðŸ“„" },
         ].map((c) => (
           <button
             key={c.value}
@@ -114,7 +114,7 @@ export default function DocumentsPage() {
         <input
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          placeholder="Search documents…"
+          placeholder="Search documentsâ€¦"
           className="flex-1 border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-spira-500 bg-white"
         />
         <button type="submit" className="px-4 py-2 text-sm border border-border rounded-lg bg-white hover:bg-surface-50">
@@ -137,7 +137,7 @@ export default function DocumentsPage() {
           data?.data.map((doc) => (
             <div key={doc.id} className="bg-white rounded-xl border border-border p-4">
               <div className="flex items-start gap-3">
-                <span className="text-2xl mt-0.5">{CAT_ICON[doc.category] ?? "📄"}</span>
+                <span className="text-2xl mt-0.5">{CAT_ICON[doc.category] ?? "ðŸ“„"}</span>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-text-900 truncate">{doc.title}</p>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -151,7 +151,7 @@ export default function DocumentsPage() {
                     <span className="text-xs text-text-400">{new Date(doc.createdAt).toLocaleDateString("en-IN", { timeZone: "UTC" })}</span>
                   </div>
                 </div>
-                <Link href={`/documents/${doc.id}`} className="text-sm text-spira-700 font-medium shrink-0">View →</Link>
+                <Link href={`/documents/${doc.id}`} className="text-sm text-spira-700 font-medium shrink-0">View â†’</Link>
               </div>
             </div>
           ))

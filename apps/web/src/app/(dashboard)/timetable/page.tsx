@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@spira/types";
+import { Role } from "@/types";
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const PERIODS = [1, 2, 3, 4, 5, 6];
@@ -50,7 +50,7 @@ const TYPE_STYLE: Record<string, string> = {
   holiday:    "bg-green-100 text-green-700",
 };
 const TYPE_ICON: Record<string, string> = {
-  exam: "📝", event: "🎉", assignment: "📋", holiday: "🏖",
+  exam: "ðŸ“", event: "ðŸŽ‰", assignment: "ðŸ“‹", holiday: "ðŸ–",
 };
 
 const SUBJECT_COLORS: Record<string, string> = {
@@ -122,13 +122,13 @@ export default function TimetablePage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-xl md:text-2xl font-semibold text-text-900">Timetable</h1>
-          <p className="text-text-500 text-sm mt-0.5">Academic Year 2025–26</p>
+          <p className="text-text-500 text-sm mt-0.5">Academic Year 2025â€“26</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex border border-border rounded-lg overflow-hidden">
             {(["week", "calendar"] as const).map((v) => (
               <button key={v} onClick={() => setView(v)} className={`px-3 py-1.5 text-xs font-medium transition-colors capitalize ${view === v ? "bg-spira-700 text-white" : "bg-white text-text-600 hover:bg-surface-50"}`}>
-                {v === "week" ? "📅 Week" : "📆 Year"}
+                {v === "week" ? "ðŸ“… Week" : "ðŸ“† Year"}
               </button>
             ))}
           </div>
@@ -140,7 +140,7 @@ export default function TimetablePage() {
                 <option value="term_3">Term 3</option>
               </select>
               <select value={selectedSection} onChange={(e) => setSelectedSection(e.target.value)} className="px-3 py-2 text-sm border border-border rounded-md bg-white md:min-w-[140px]">
-                <option value="">— Section —</option>
+                <option value="">â€” Section â€”</option>
                 {(sections ?? []).map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </>
@@ -156,10 +156,10 @@ export default function TimetablePage() {
           {isStudentOrParent && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { label: "School Days",    value: "180", icon: "🏫", color: "from-blue-500 to-blue-700" },
-                { label: "Holidays",       value: `${HOLIDAYS.length}`, icon: "🏖", color: "from-green-500 to-green-700" },
-                { label: "Upcoming Exams", value: `${EVENTS.filter(e => e.type === "exam" && new Date(e.date) >= new Date()).length}`, icon: "📝", color: "from-red-500 to-red-700" },
-                { label: "Events Left",    value: `${EVENTS.filter(e => e.type === "event" && new Date(e.date) >= new Date()).length}`, icon: "🎉", color: "from-purple-500 to-purple-700" },
+                { label: "School Days",    value: "180", icon: "ðŸ«", color: "from-blue-500 to-blue-700" },
+                { label: "Holidays",       value: `${HOLIDAYS.length}`, icon: "ðŸ–", color: "from-green-500 to-green-700" },
+                { label: "Upcoming Exams", value: `${EVENTS.filter(e => e.type === "exam" && new Date(e.date) >= new Date()).length}`, icon: "ðŸ“", color: "from-red-500 to-red-700" },
+                { label: "Events Left",    value: `${EVENTS.filter(e => e.type === "event" && new Date(e.date) >= new Date()).length}`, icon: "ðŸŽ‰", color: "from-purple-500 to-purple-700" },
               ].map((m) => (
                 <div key={m.label} className={`bg-gradient-to-br ${m.color} rounded-xl p-4 text-white`}>
                   <p className="text-2xl mb-1">{m.icon}</p>
@@ -175,9 +175,9 @@ export default function TimetablePage() {
             <div className="grid md:grid-cols-2 gap-4">
               {/* Today's timetable */}
               <div className="bg-white rounded-2xl border border-border p-5">
-                <h2 className="text-sm font-semibold text-text-900 mb-3">Today — {DAYS[todayIdx] ?? "Weekend"}</h2>
+                <h2 className="text-sm font-semibold text-text-900 mb-3">Today â€” {DAYS[todayIdx] ?? "Weekend"}</h2>
                 {todayIdx < 0 || todayIdx > 4 ? (
-                  <p className="text-text-400 text-sm">No classes today. Enjoy your weekend! 🎉</p>
+                  <p className="text-text-400 text-sm">No classes today. Enjoy your weekend! ðŸŽ‰</p>
                 ) : todaySlots.length === 0 ? (
                   <p className="text-text-400 text-sm">No timetable data loaded yet.</p>
                 ) : (
@@ -193,7 +193,7 @@ export default function TimetablePage() {
                             {code && <p className="text-xs text-text-400">{code}</p>}
                           </div>
                           <div className="text-right shrink-0">
-                            <p className="text-xs font-medium text-text-700">{s.startTime}–{s.endTime}</p>
+                            <p className="text-xs font-medium text-text-700">{s.startTime}â€“{s.endTime}</p>
                             <p className="text-xs text-text-400">Period {s.periodNumber}</p>
                           </div>
                         </div>
@@ -209,7 +209,7 @@ export default function TimetablePage() {
                 <div className="space-y-2">
                   {[...upcoming, ...upcomingHolidays.map(h => ({ ...h, type: "holiday" }))].slice(0, 6).map((e, i) => (
                     <div key={i} className="flex items-center gap-3 p-3 rounded-xl border border-surface-100">
-                      <span className="text-xl">{TYPE_ICON[e.type] ?? "📌"}</span>
+                      <span className="text-xl">{TYPE_ICON[e.type] ?? "ðŸ“Œ"}</span>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-text-900 truncate">{e.name}</p>
                         <span className={`inline-flex text-xs px-1.5 py-0.5 rounded font-medium mt-0.5 ${TYPE_STYLE[e.type] ?? ""}`}>{e.type}</span>
@@ -235,7 +235,7 @@ export default function TimetablePage() {
                 <h2 className="text-sm font-semibold text-text-900">Weekly Schedule</h2>
               </div>
               {isLoading ? (
-                <div className="p-8 text-center text-text-500 text-sm animate-pulse">Loading timetable…</div>
+                <div className="p-8 text-center text-text-500 text-sm animate-pulse">Loading timetableâ€¦</div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm border-collapse" aria-label="Timetable grid">
@@ -250,7 +250,7 @@ export default function TimetablePage() {
                     <tbody>
                       {PERIODS.map((period) => {
                         const anySlot = Object.values(grid).find((d) => d[period]);
-                        const timeLabel = anySlot ? `${anySlot[period].startTime}–${anySlot[period].endTime}` : "";
+                        const timeLabel = anySlot ? `${anySlot[period].startTime}â€“${anySlot[period].endTime}` : "";
                         return (
                           <tr key={period} className="border-b border-surface-100 last:border-0">
                             <td className="px-4 py-3 text-xs text-text-500">
@@ -267,10 +267,10 @@ export default function TimetablePage() {
                                     <div className="inline-flex flex-col items-center gap-0.5 rounded-lg px-2 py-2 text-xs w-full max-w-[130px] border"
                                       style={{ backgroundColor: `${color}15`, borderColor: `${color}30` }}>
                                       <span className="font-semibold text-[11px] truncate w-full text-center" style={{ color }}>{name ?? "Class"}</span>
-                                      <span className="text-[10px]" style={{ color: `${color}99` }}>{slot.startTime}–{slot.endTime}</span>
+                                      <span className="text-[10px]" style={{ color: `${color}99` }}>{slot.startTime}â€“{slot.endTime}</span>
                                     </div>
                                   ) : (
-                                    <span className="text-text-300 text-xs">—</span>
+                                    <span className="text-text-300 text-xs">â€”</span>
                                   )}
                                 </td>
                               );

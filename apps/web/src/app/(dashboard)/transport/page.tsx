@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@spira/types";
+import { Role } from "@/types";
 
 interface TransportRoute {
   id: string;
@@ -41,13 +41,13 @@ const STATUS_LABEL: Record<string, string> = {
   idle:     "Idle",
 };
 
-// Simulated GPS waypoints for Route A (school → pickup zones)
+// Simulated GPS waypoints for Route A (school â†’ pickup zones)
 const ROUTE_A_WAYPOINTS = [
   { lat: 18.5204, lng: 73.8567, label: "SPIRA Demo School", type: "school" },
-  { lat: 18.5280, lng: 73.8490, label: "Stop 1 – Park Lane", type: "stop" },
-  { lat: 18.5330, lng: 73.8420, label: "Stop 2 – Sector 8", type: "stop" },
-  { lat: 18.5390, lng: 73.8360, label: "Stop 3 – Sunrise Apts (Ava)", type: "pickup" },
-  { lat: 18.5450, lng: 73.8290, label: "Stop 4 – North Gate", type: "stop" },
+  { lat: 18.5280, lng: 73.8490, label: "Stop 1 â€“ Park Lane", type: "stop" },
+  { lat: 18.5330, lng: 73.8420, label: "Stop 2 â€“ Sector 8", type: "stop" },
+  { lat: 18.5390, lng: 73.8360, label: "Stop 3 â€“ Sunrise Apts (Ava)", type: "pickup" },
+  { lat: 18.5450, lng: 73.8290, label: "Stop 4 â€“ North Gate", type: "stop" },
 ];
 const BUS_POSITION = { lat: 18.5340, lng: 73.8400, label: "Bus Current Position" };
 
@@ -90,13 +90,13 @@ export default function TransportPage() {
             <div>
               <p className="text-blue-200 text-xs font-semibold uppercase tracking-wider mb-1">My Bus</p>
               <p className="text-xl font-bold">{myRoute.route.routeName}</p>
-              <p className="text-blue-100 text-sm mt-0.5">{myRoute.route.vehicleNumber} · Driver: {myRoute.route.driverName}</p>
+              <p className="text-blue-100 text-sm mt-0.5">{myRoute.route.vehicleNumber} Â· Driver: {myRoute.route.driverName}</p>
             </div>
             <span className={`px-3 py-1 rounded-full text-sm font-bold ${
               myRoute.route.status === "on_route" ? "bg-yellow-400 text-yellow-900" :
               myRoute.route.status === "arrived"  ? "bg-green-400 text-green-900" : "bg-red-400 text-red-900"
             }`}>
-              {myRoute.route.status === "on_route" ? "🚌 On Route" : myRoute.route.status === "arrived" ? "✅ Arrived" : "⚠ Delayed"}
+              {myRoute.route.status === "on_route" ? "ðŸšŒ On Route" : myRoute.route.status === "arrived" ? "âœ… Arrived" : "âš  Delayed"}
             </span>
           </div>
 
@@ -104,17 +104,17 @@ export default function TransportPage() {
             <div>
               <p className="text-blue-300 text-xs font-medium uppercase tracking-wide">Pickup Point</p>
               <p className="font-medium mt-0.5">{myRoute.pickupLocation}</p>
-              {myRoute.pickupEta && <p className="text-blue-200 text-xs mt-0.5">📍 ETA {myRoute.pickupEta} AM</p>}
+              {myRoute.pickupEta && <p className="text-blue-200 text-xs mt-0.5">ðŸ“ ETA {myRoute.pickupEta} AM</p>}
             </div>
             <div>
               <p className="text-blue-300 text-xs font-medium uppercase tracking-wide">Drop Point</p>
               <p className="font-medium mt-0.5">{myRoute.dropLocation}</p>
-              {myRoute.dropEta && <p className="text-blue-200 text-xs mt-0.5">📍 ETA {myRoute.dropEta} PM</p>}
+              {myRoute.dropEta && <p className="text-blue-200 text-xs mt-0.5">ðŸ“ ETA {myRoute.dropEta} PM</p>}
             </div>
           </div>
           {myRoute.route.driverPhone && (
             <div className="mt-3 flex items-center gap-2">
-              <span className="text-blue-200 text-xs">📞 {myRoute.route.driverPhone}</span>
+              <span className="text-blue-200 text-xs">ðŸ“ž {myRoute.route.driverPhone}</span>
             </div>
           )}
         </div>
@@ -124,7 +124,7 @@ export default function TransportPage() {
       {isStudentOrParent && myRoute && (
         <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-sm">
           <div className="flex items-center justify-between px-5 py-3 border-b border-border">
-            <h2 className="text-sm font-semibold text-text-900">🗺 Live Route Map</h2>
+            <h2 className="text-sm font-semibold text-text-900">ðŸ—º Live Route Map</h2>
             <span className="flex items-center gap-1.5 text-xs text-green-600 font-medium">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse inline-block" />
               Live
@@ -138,9 +138,9 @@ export default function TransportPage() {
       {isStudentOrParent && myRoute && (
         <div className="grid grid-cols-3 gap-3">
           {[
-            { label: "Next Stop ETA", value: "~8 min", icon: "⏱" },
-            { label: "Distance Left", value: "3.2 km", icon: "📏" },
-            { label: "Students on Bus", value: `${myRoute.route._count?.assignments ?? 1}`, icon: "👥" },
+            { label: "Next Stop ETA", value: "~8 min", icon: "â±" },
+            { label: "Distance Left", value: "3.2 km", icon: "ðŸ“" },
+            { label: "Students on Bus", value: `${myRoute.route._count?.assignments ?? 1}`, icon: "ðŸ‘¥" },
           ].map((s) => (
             <div key={s.label} className="bg-white rounded-xl border border-border p-3 text-center">
               <p className="text-xl mb-1">{s.icon}</p>
@@ -256,7 +256,7 @@ function LiveMap() {
                 fill={isSchool ? "#1d4ed8" : isPickup ? "#f59e0b" : "#6366f1"}
                 stroke="white" strokeWidth="2" />
               {isSchool && <text x={x} y={y+1} textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="10" fontWeight="bold">S</text>}
-              {isPickup && <text x={x} y={y+1} textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="10" fontWeight="bold">★</text>}
+              {isPickup && <text x={x} y={y+1} textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="10" fontWeight="bold">â˜…</text>}
               <rect x={x+14} y={y-10} width={w.label.length * 5.8 + 8} height="18" rx="4" fill="white" fillOpacity="0.9" />
               <text x={x+18} y={y+1} dominantBaseline="middle" fill="#1e293b" fontSize="9" fontWeight="500">{w.label}</text>
             </g>
@@ -266,7 +266,7 @@ function LiveMap() {
         {/* Animated bus */}
         <g transform={`translate(${busX},${busY})`}>
           <circle r="14" fill="#ef4444" stroke="white" strokeWidth="3" />
-          <text textAnchor="middle" dominantBaseline="middle" fontSize="14">🚌</text>
+          <text textAnchor="middle" dominantBaseline="middle" fontSize="14">ðŸšŒ</text>
         </g>
 
         {/* Legend */}
@@ -278,7 +278,7 @@ function LiveMap() {
         <circle cx="145" cy="304" r="6" fill="#6366f1" />
         <text x="156" y="308" fill="#374151" fontSize="9">Bus Stop</text>
         <circle cx="24" cy="322" r="8" fill="#ef4444" stroke="white" strokeWidth="2" />
-        <text x="24" y="323" textAnchor="middle" dominantBaseline="middle" fontSize="9">🚌</text>
+        <text x="24" y="323" textAnchor="middle" dominantBaseline="middle" fontSize="9">ðŸšŒ</text>
         <text x="37" y="326" fill="#374151" fontSize="9">Bus (live)</text>
       </svg>
       {/* ETA overlay */}

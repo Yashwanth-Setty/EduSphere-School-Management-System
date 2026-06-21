@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@spira/types";
+import { Role } from "@/types";
 import { canCreate, canSubmitAssignment } from "@/lib/permissions";
 
 interface Assignment {
@@ -73,19 +73,19 @@ export default function AssignmentsPage() {
                   <p className="font-semibold text-text-900 truncate">{a.title}</p>
                   <p className="text-sm text-text-500 mt-0.5">
                     <span className="font-mono text-spira-700 text-xs">{a.courseOffering.course.code}</span>
-                    {" · "}{a.courseOffering.section.name}
+                    {" Â· "}{a.courseOffering.section.name}
                   </p>
                   <div className="flex items-center gap-2 mt-2 flex-wrap">
                     <span className="text-xs text-text-400">Due {new Date(a.dueDate).toLocaleDateString("en-IN", { timeZone: "UTC" })}</span>
-                    {a.maxScore && <span className="text-xs text-text-400">· {a.maxScore} pts</span>}
-                    {!isStudent && <span className="text-xs text-text-400">· {a._count.submissions} submissions</span>}
+                    {a.maxScore && <span className="text-xs text-text-400">Â· {a.maxScore} pts</span>}
+                    {!isStudent && <span className="text-xs text-text-400">Â· {a._count.submissions} submissions</span>}
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${a.isPublished ? "bg-success/10 text-success" : "bg-surface-100 text-text-500"}`}>
                       {a.isPublished ? "Published" : "Draft"}
                     </span>
                   </div>
                 </div>
                 <Link href={`/assignments/${a.id}`} className="text-sm text-spira-700 font-medium shrink-0">
-                  {isStudent ? "Submit →" : "View →"}
+                  {isStudent ? "Submit â†’" : "View â†’"}
                 </Link>
               </div>
             </div>
@@ -126,7 +126,7 @@ export default function AssignmentsPage() {
                       <td className="px-4 py-3 font-mono text-xs text-spira-800">{a.courseOffering.course.code}</td>
                       <td className="px-4 py-3 text-text-500">{a.courseOffering.section.name}</td>
                       <td className="px-4 py-3 text-text-500">{new Date(a.dueDate).toLocaleDateString("en-IN", { timeZone: "UTC" })}</td>
-                      <td className="px-4 py-3 text-text-500">{a.maxScore ?? "—"}</td>
+                      <td className="px-4 py-3 text-text-500">{a.maxScore ?? "â€”"}</td>
                       {!isStudent && <td className="px-4 py-3 text-text-500">{a._count.submissions}</td>}
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${a.isPublished ? "bg-success/10 text-success" : "bg-text-500/10 text-text-500"}`}>

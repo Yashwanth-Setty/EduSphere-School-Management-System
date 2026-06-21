@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -6,7 +6,7 @@ import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@spira/types";
+import { Role } from "@/types";
 import { canCreate, canPayInvoice } from "@/lib/permissions";
 
 interface Invoice {
@@ -125,7 +125,7 @@ export default function FeesPage() {
                   </div>
                 </div>
                 <Link href={`/fees/${inv.id}`} className="text-sm text-spira-700 font-medium shrink-0">
-                  {showPayAction && inv.status !== "paid" ? "Pay →" : "View →"}
+                  {showPayAction && inv.status !== "paid" ? "Pay â†’" : "View â†’"}
                 </Link>
               </div>
             </div>

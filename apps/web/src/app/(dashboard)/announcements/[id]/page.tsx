@@ -6,7 +6,7 @@ import useSWR, { mutate } from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@spira/types";
+import { Role } from "@/types";
 
 interface Announcement {
   id: string; title: string; body: string;

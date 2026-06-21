@@ -1,4 +1,4 @@
-import { Role } from "@spira/types";
+﻿import { Role } from "@/types";
 
 export interface NavItem {
   label: string;
@@ -11,97 +11,97 @@ export const NAV_ITEMS: NavItem[] = [
   {
     label: "Dashboard",
     href: "/dashboard",
-    icon: "⬛",
+    icon: "â¬›",
     roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT, Role.ACCOUNTANT, Role.COUNSELOR],
   },
   {
     label: "Students",
     href: "/students",
-    icon: "🎓",
+    icon: "ðŸŽ“",
     roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER],
   },
   {
     label: "Staff",
     href: "/staff",
-    icon: "👨‍🏫",
+    icon: "ðŸ‘¨â€ðŸ«",
     roles: [Role.ADMIN, Role.PRINCIPAL],
   },
   {
     label: "Attendance",
     href: "/attendance",
-    icon: "📋",
+    icon: "ðŸ“‹",
     roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER],
   },
   {
     label: "Timetable",
     href: "/timetable",
-    icon: "📅",
+    icon: "ðŸ“…",
     roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT],
   },
   {
     label: "Courses",
     href: "/courses",
-    icon: "📚",
+    icon: "ðŸ“š",
     roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER],
   },
   {
     label: "Assignments",
     href: "/assignments",
-    icon: "📝",
+    icon: "ðŸ“",
     roles: [Role.TEACHER, Role.STUDENT],
   },
   {
     label: "Exams & Results",
     href: "/exams",
-    icon: "📊",
+    icon: "ðŸ“Š",
     roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT],
   },
   {
     label: "Fees",
     href: "/fees",
-    icon: "💰",
+    icon: "ðŸ’°",
     roles: [Role.ADMIN, Role.ACCOUNTANT, Role.STUDENT, Role.PARENT],
   },
   {
     label: "Communication",
     href: "/announcements",
-    icon: "📢",
+    icon: "ðŸ“¢",
     roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT, Role.ACCOUNTANT, Role.COUNSELOR],
   },
   {
     label: "Documents",
     href: "/documents",
-    icon: "📄",
+    icon: "ðŸ“„",
     roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT, Role.ACCOUNTANT, Role.COUNSELOR],
   },
   {
     label: "Analytics",
     href: "/analytics",
-    icon: "📈",
+    icon: "ðŸ“ˆ",
     roles: [Role.ADMIN, Role.PRINCIPAL, Role.ACCOUNTANT, Role.COUNSELOR],
   },
   {
     label: "AI Insights",
     href: "/ai",
-    icon: "🤖",
+    icon: "ðŸ¤–",
     roles: [Role.ADMIN, Role.PRINCIPAL, Role.COUNSELOR],
   },
   {
     label: "Transport",
     href: "/transport",
-    icon: "🚌",
+    icon: "ðŸšŒ",
     roles: [Role.ADMIN, Role.PRINCIPAL, Role.STUDENT, Role.PARENT],
   },
   {
     label: "Online Classes",
     href: "/online-classes",
-    icon: "🎥",
+    icon: "ðŸŽ¥",
     roles: [Role.ADMIN, Role.PRINCIPAL, Role.TEACHER, Role.STUDENT, Role.PARENT],
   },
   {
     label: "AI Assistant",
     href: "/assistant",
-    icon: "💬",
+    icon: "ðŸ’¬",
     roles: [Role.STUDENT],
   },
 ];

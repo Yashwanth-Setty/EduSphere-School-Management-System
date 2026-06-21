@@ -1,4 +1,4 @@
-import { Role } from "@spira/types";
+﻿import { Role } from "@/types";
 
 export type Module =
   | "students"

@@ -1,13 +1,13 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import { apiClient } from "@/lib/api-client";
 import { getAccessToken } from "@/lib/auth";
-import { AuthUser } from "@spira/types";
+import { AuthUser } from "@/types";
 
-// ── Static mock data ────────────────────────────────────────────────────────
+// â”€â”€ Static mock data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const MY_CLASSES = [
   { id: "1", subject: "Mathematics",    code: "MATH-8", section: "Grade 8-A", students: 32, room: "Room 101", color: "#6366f1" },
@@ -25,9 +25,9 @@ const STUDENT_PERFORMANCE = [
 ];
 
 const RECENT_ASSIGNMENTS = [
-  { id: "1", title: "Chapter 5 – Linear Equations Ex 5.3", class: "Grade 8-A", dueDate: "2026-06-28", submitted: 24, total: 32, status: "active" },
-  { id: "2", title: "Practice Set – Quadratic Equations",   class: "Grade 9-A", dueDate: "2026-07-02", submitted: 20, total: 28, status: "active" },
-  { id: "3", title: "Chapter 3 – Fractions Worksheet",      class: "Grade 7-B", dueDate: "2026-06-21", submitted: 30, total: 30, status: "closed" },
+  { id: "1", title: "Chapter 5 â€“ Linear Equations Ex 5.3", class: "Grade 8-A", dueDate: "2026-06-28", submitted: 24, total: 32, status: "active" },
+  { id: "2", title: "Practice Set â€“ Quadratic Equations",   class: "Grade 9-A", dueDate: "2026-07-02", submitted: 20, total: 28, status: "active" },
+  { id: "3", title: "Chapter 3 â€“ Fractions Worksheet",      class: "Grade 7-B", dueDate: "2026-06-21", submitted: 30, total: 30, status: "closed" },
 ];
 
 const PARENT_MESSAGES = [
@@ -73,13 +73,13 @@ const GRADE_COLORS: Record<string, string> = {
 
 const DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-// ── Types ───────────────────────────────────────────────────────────────────
+// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface TimetableSlot { id: string; dayOfWeek: number; periodNumber: number; startTime: string; endTime: string; roomLabel?: string; courseOffering: { course: { code: string; name: string }; section: { name: string } } }
 interface AttendanceSession { id: string; sessionDate: string; periodNumber: number; submittedAt?: string; section: { name: string } }
 interface Paged<T> { data: T[]; total: number }
 
-// ── Main component ──────────────────────────────────────────────────────────
+// â”€â”€ Main component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export function TeacherDashboard({ user }: { user: AuthUser }) {
   const [mounted, setMounted] = useState(false);
@@ -133,7 +133,7 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
       {/* Header */}
       <div>
         <h1 className="text-xl md:text-2xl font-semibold text-text-900">Teacher Dashboard</h1>
-        <p className="text-text-500 text-sm mt-1">Welcome back, <span className="font-medium text-text-700">{user.displayName}</span> · {DAY_NAMES[todayDow]}</p>
+        <p className="text-text-500 text-sm mt-1">Welcome back, <span className="font-medium text-text-700">{user.displayName}</span> Â· {DAY_NAMES[todayDow]}</p>
       </div>
 
       {/* KPI cards */}
@@ -178,22 +178,22 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
             <div className="bg-white rounded-2xl border border-border p-5">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-sm font-semibold text-text-900">Today&apos;s Timetable</h2>
-                <Link href="/timetable" className="text-xs text-spira-700 hover:underline">Full →</Link>
+                <Link href="/timetable" className="text-xs text-spira-700 hover:underline">Full â†’</Link>
               </div>
               {MY_CLASSES.map((cls, i) => (
                 <div key={cls.id} className="flex items-center gap-4 p-3 rounded-xl border border-surface-100 mb-2">
                   <div className="w-1 self-stretch rounded-full" style={{ backgroundColor: cls.color }} />
-                  <div className="text-xs text-text-400 w-20 shrink-0">0{8+i}:00 – 0{9+i}:00</div>
+                  <div className="text-xs text-text-400 w-20 shrink-0">0{8+i}:00 â€“ 0{9+i}:00</div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-text-900">{cls.subject}</p>
-                    <p className="text-xs text-text-500">{cls.section} · {cls.room}</p>
+                    <p className="text-xs text-text-500">{cls.section} Â· {cls.room}</p>
                   </div>
                   <span className="text-xs font-mono text-spira-700">{cls.code}</span>
                 </div>
               ))}
               {pendingSessions.length > 0 && (
                 <div className="mt-3 p-3 rounded-xl bg-warning/10 border border-warning/20">
-                  <p className="text-sm font-medium text-warning">⚠ {pendingSessions.length} attendance session{pendingSessions.length > 1 ? "s" : ""} pending</p>
+                  <p className="text-sm font-medium text-warning">âš  {pendingSessions.length} attendance session{pendingSessions.length > 1 ? "s" : ""} pending</p>
                 </div>
               )}
             </div>
@@ -202,7 +202,7 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
             <div className="bg-white rounded-2xl border border-border p-5">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-sm font-semibold text-text-900">Recent Assignments</h2>
-                <Link href="/assignments" className="text-xs text-spira-700 hover:underline">View all →</Link>
+                <Link href="/assignments" className="text-xs text-spira-700 hover:underline">View all â†’</Link>
               </div>
               <div className="space-y-3">
                 {RECENT_ASSIGNMENTS.map((a) => {
@@ -212,7 +212,7 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <div>
                           <p className="text-sm font-medium text-text-900">{a.title}</p>
-                          <p className="text-xs text-text-500 mt-0.5">{a.class} · Due {new Date(a.dueDate).toLocaleDateString("en-IN", { timeZone: "UTC", day: "numeric", month: "short" })}</p>
+                          <p className="text-xs text-text-500 mt-0.5">{a.class} Â· Due {new Date(a.dueDate).toLocaleDateString("en-IN", { timeZone: "UTC", day: "numeric", month: "short" })}</p>
                         </div>
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${a.status === "closed" ? "bg-gray-100 text-gray-600" : "bg-blue-100 text-blue-700"}`}>{a.status}</span>
                       </div>
@@ -235,7 +235,7 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
             <div className="bg-white rounded-2xl border border-border p-5">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-sm font-semibold text-text-900">Top Performers</h2>
-                <button onClick={() => setActiveTab("marks")} className="text-xs text-spira-700 hover:underline">See all →</button>
+                <button onClick={() => setActiveTab("marks")} className="text-xs text-spira-700 hover:underline">See all â†’</button>
               </div>
               <div className="space-y-2">
                 {STUDENT_PERFORMANCE.sort((a, b) => b.marks - a.marks).slice(0, 5).map((s) => (
@@ -257,7 +257,7 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
             <div className="bg-white rounded-2xl border border-border p-4">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-sm font-semibold text-text-900">Parent Messages</h2>
-                <button onClick={() => setActiveTab("messages")} className="text-xs text-spira-700 hover:underline">All →</button>
+                <button onClick={() => setActiveTab("messages")} className="text-xs text-spira-700 hover:underline">All â†’</button>
               </div>
               <div className="space-y-2">
                 {PARENT_MESSAGES.slice(0, 3).map((m) => (
@@ -280,11 +280,11 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
               <h2 className="text-sm font-semibold text-text-900 mb-3">Quick Actions</h2>
               <div className="space-y-1">
                 {[
-                  { label: "Mark Attendance", icon: "📋", action: () => setActiveTab("attendance") },
-                  { label: "Enter Marks",      icon: "✏️", action: () => setActiveTab("marks") },
-                  { label: "New Assignment",   icon: "📝", href: "/assignments/new" },
-                  { label: "Schedule Exam",    icon: "📊", href: "/exams/new" },
-                  { label: "Online Classes",   icon: "🎥", href: "/online-classes" },
+                  { label: "Mark Attendance", icon: "ðŸ“‹", action: () => setActiveTab("attendance") },
+                  { label: "Enter Marks",      icon: "âœï¸", action: () => setActiveTab("marks") },
+                  { label: "New Assignment",   icon: "ðŸ“", href: "/assignments/new" },
+                  { label: "Schedule Exam",    icon: "ðŸ“Š", href: "/exams/new" },
+                  { label: "Online Classes",   icon: "ðŸŽ¥", href: "/online-classes" },
                 ].map((a) => (
                   a.href ? (
                     <Link key={a.label} href={a.href} className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-text-700 hover:bg-surface-50 rounded-md transition-colors">
@@ -316,8 +316,8 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
               </div>
               <p className="text-sm text-text-700 font-medium">{cls.section}</p>
               <div className="flex items-center justify-between mt-3 text-xs text-text-400">
-                <span>👥 {cls.students} students</span>
-                <span>🏛 {cls.room}</span>
+                <span>ðŸ‘¥ {cls.students} students</span>
+                <span>ðŸ› {cls.room}</span>
               </div>
               <div className="mt-3 flex gap-2">
                 <button onClick={() => setActiveTab("attendance")} className="flex-1 py-1.5 text-xs bg-surface-50 border border-border rounded-lg hover:bg-spira-50 hover:border-spira-300 transition-colors">Attendance</button>
@@ -333,8 +333,8 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
         <div className="space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
-              <h2 className="text-sm font-semibold text-text-900">Mark Attendance – Grade 8-A</h2>
-              <p className="text-xs text-text-400 mt-0.5">{new Date().toLocaleDateString("en-IN", { dateStyle: "full" })} · Period 1 (08:00 – 09:00)</p>
+              <h2 className="text-sm font-semibold text-text-900">Mark Attendance â€“ Grade 8-A</h2>
+              <p className="text-xs text-text-400 mt-0.5">{new Date().toLocaleDateString("en-IN", { dateStyle: "full" })} Â· Period 1 (08:00 â€“ 09:00)</p>
             </div>
             <select className="px-3 py-2 text-sm border border-border rounded-lg bg-white">
               <option>Grade 8-A</option>
@@ -386,11 +386,11 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
       {activeTab === "marks" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-3">
-            <h2 className="text-sm font-semibold text-text-900">Marks Entry – Grade 8-A · Math Mid-term (50 marks)</h2>
+            <h2 className="text-sm font-semibold text-text-900">Marks Entry â€“ Grade 8-A Â· Math Mid-term (50 marks)</h2>
             <select className="px-3 py-2 text-sm border border-border rounded-lg bg-white">
-              <option>Grade 8-A – Math Mid-term</option>
-              <option>Grade 7-B – Math Mid-term</option>
-              <option>Grade 9-A – Math Mid-term</option>
+              <option>Grade 8-A â€“ Math Mid-term</option>
+              <option>Grade 7-B â€“ Math Mid-term</option>
+              <option>Grade 9-A â€“ Math Mid-term</option>
             </select>
           </div>
           <div className="bg-white rounded-2xl border border-border overflow-hidden">
@@ -438,7 +438,7 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
                     <p className="font-semibold text-text-900">{m.parent}</p>
                     {m.unread && <span className="w-2 h-2 bg-spira-600 rounded-full" />}
                   </div>
-                  <p className="text-xs text-text-400">Parent of {m.child} · {m.time}</p>
+                  <p className="text-xs text-text-400">Parent of {m.child} Â· {m.time}</p>
                   <p className="text-sm text-text-600 mt-1 line-clamp-2">{m.message}</p>
                 </div>
               </div>
@@ -463,7 +463,7 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-text-900">{e.title}</p>
-                  <p className="text-sm text-text-500">{e.class} · Max {e.maxMarks} marks</p>
+                  <p className="text-sm text-text-500">{e.class} Â· Max {e.maxMarks} marks</p>
                 </div>
                 <div className="flex gap-2">
                   <button className="px-3 py-1.5 text-xs border border-border rounded-lg hover:bg-surface-50">Edit</button>
@@ -503,12 +503,12 @@ export function TeacherDashboard({ user }: { user: AuthUser }) {
               <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center text-sm font-bold">{msgOpen.avatar}</div>
               <div>
                 <p className="font-semibold text-text-900">{msgOpen.parent}</p>
-                <p className="text-xs text-text-400">Parent of {"child" in msgOpen ? msgOpen.child : ""} · {msgOpen.time}</p>
+                <p className="text-xs text-text-400">Parent of {"child" in msgOpen ? msgOpen.child : ""} Â· {msgOpen.time}</p>
               </div>
             </div>
             <p className="text-text-700 text-sm leading-relaxed bg-surface-50 rounded-xl p-4">{msgOpen.message}</p>
             <div className="mt-4 flex gap-2">
-              <input placeholder="Reply to parent…" className="flex-1 border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-spira-500" />
+              <input placeholder="Reply to parentâ€¦" className="flex-1 border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-spira-500" />
               <button className="px-4 py-2 bg-spira-700 text-white text-sm rounded-lg hover:bg-spira-800">Send</button>
             </div>
             <button onClick={() => setMsgOpen(null)} className="mt-3 w-full text-xs text-text-400 hover:text-text-600">Close</button>

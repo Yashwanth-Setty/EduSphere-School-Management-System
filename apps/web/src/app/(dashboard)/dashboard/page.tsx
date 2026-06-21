@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@spira/types";
+import { Role } from "@/types";
 import { AdminDashboard } from "@/components/dashboard/AdminDashboard";
 import { TeacherDashboard } from "@/components/dashboard/TeacherDashboard";
 import { StudentDashboard } from "@/components/dashboard/StudentDashboard";

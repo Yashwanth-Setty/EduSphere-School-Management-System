@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
 import { apiClient } from "@/lib/api-client";
 import { useAuth } from "@/hooks/useAuth";
-import { Role } from "@spira/types";
+import { Role } from "@/types";
 import { canCreate } from "@/lib/permissions";
 
 interface RunResult {
@@ -19,13 +19,13 @@ const JOBS: { key: JobKey; label: string; desc: string; icon: string }[] = [
     key: "attendance-risk",
     label: "Attendance Risk Scoring",
     desc: "Analyses the last 30 days of attendance for every active student and flags high- and medium-risk cases.",
-    icon: "📋",
+    icon: "ðŸ“‹",
   },
   {
     key: "performance-summary",
     label: "Performance Summary",
     desc: "Computes average exam scores from all published results and generates a narrative summary per student.",
-    icon: "📊",
+    icon: "ðŸ“Š",
   },
 ];
 
@@ -59,7 +59,7 @@ export default function AiInsightsPage() {
       <div>
         <h1 className="text-xl md:text-2xl font-semibold text-text-900">AI Insights</h1>
         <p className="text-text-500 text-sm mt-1">
-          Rule-based scoring and recommendation generation — no external model calls required.
+          Rule-based scoring and recommendation generation â€” no external model calls required.
         </p>
       </div>
 
@@ -69,7 +69,7 @@ export default function AiInsightsPage() {
         </div>
       )}
 
-      {/* Job cards — only shown to roles that can trigger jobs */}
+      {/* Job cards â€” only shown to roles that can trigger jobs */}
       {canRunJobs && (
       <section>
         <h2 className="text-sm font-semibold text-text-700 uppercase tracking-wide mb-3">Run Analysis</h2>
@@ -89,7 +89,7 @@ export default function AiInsightsPage() {
 
                 {result && (
                   <div className="bg-green-50 border border-green-200 rounded-md px-3 py-2 text-sm text-green-800">
-                    Processed <strong>{result.processed}</strong> students — <strong>{result.created}</strong> recommendations written.
+                    Processed <strong>{result.processed}</strong> students â€” <strong>{result.created}</strong> recommendations written.
                   </div>
                 )}
 
@@ -98,7 +98,7 @@ export default function AiInsightsPage() {
                   disabled={isRunning || running !== null}
                   className="w-full py-2 px-4 bg-spira-700 text-white text-sm font-medium rounded-md hover:bg-spira-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  {isRunning ? "Running…" : "Run Now"}
+                  {isRunning ? "Runningâ€¦" : "Run Now"}
                 </button>
               </div>
             );
@@ -115,7 +115,7 @@ export default function AiInsightsPage() {
             href="/ai/recommendations"
             className="bg-white rounded-lg border border-border shadow-sm p-5 hover:border-spira-400 hover:shadow-md transition-all group flex items-start gap-3"
           >
-            <span className="text-2xl">💡</span>
+            <span className="text-2xl">ðŸ’¡</span>
             <div>
               <p className="font-semibold text-text-900 group-hover:text-spira-800 transition-colors">All Recommendations</p>
               <p className="text-sm text-text-500 mt-1">Browse and filter all AI-generated insights across the school.</p>
@@ -125,7 +125,7 @@ export default function AiInsightsPage() {
             href="/ai/audit"
             className="bg-white rounded-lg border border-border shadow-sm p-5 hover:border-spira-400 hover:shadow-md transition-all group flex items-start gap-3"
           >
-            <span className="text-2xl">🗂️</span>
+            <span className="text-2xl">ðŸ—‚ï¸</span>
             <div>
               <p className="font-semibold text-text-900 group-hover:text-spira-800 transition-colors">AI Audit Log</p>
               <p className="text-sm text-text-500 mt-1">View a history of all AI analysis runs and their outcomes.</p>
