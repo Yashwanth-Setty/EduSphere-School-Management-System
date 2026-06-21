@@ -1,15 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import { apiClient } from "@/lib/api-client";
-import { setAuthTokens } from "@/lib/auth";
+import { setAuthTokens, clearAuthTokens } from "@/lib/auth";
 
 export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+
+  // Clear any stale tokens when arriving at the login page
+  useEffect(() => { clearAuthTokens(); }, []);
   const [form, setForm] = useState({ schoolCode: "", email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
